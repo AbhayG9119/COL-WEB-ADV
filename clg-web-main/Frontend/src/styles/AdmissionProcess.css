@@ -1,0 +1,145 @@
+body {
+  margin: 0;
+  background: #f9f9f9;
+  /* font-family: Arial, sans-serif; */
+}
+
+.admission-section2 {
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 40px 20px;
+  background: #daeef7;
+  color: #b81616;
+  border-radius: 20px;
+  max-width: calc(100% - 40px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.admission-section h2 {
+  font-size: 2.5em;
+  margin-bottom: 1.5%;
+  color: #b81616;
+}
+
+.admission-section p {
+  font-size: 1.2em;
+  color: black;
+  margin-bottom: 4%;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Cards Layout */
+.process-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2%;
+  max-width: 90%;
+  margin: auto;
+  margin-bottom: 4%;
+}
+
+.process-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.process-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 20px rgba(0, 86, 179, 0.2);
+}
+
+.process-card img {
+  width: 100%;
+  height: 20vh;
+  object-fit: cover;
+}
+
+.process-content {
+  padding: 2%;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.process-content h3 {
+  font-size: 1.5em;
+  color: #b81616;
+  margin-bottom: 1%;
+}
+
+.process-content p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #333;
+  flex-grow: 1;
+}
+
+/* Responsive Fix */
+@media (max-width: 768px) {
+  .admission-section {
+    padding: 4% 1.5%;
+  }
+
+  .admission-section h2 {
+    font-size: 2em;
+  }
+
+  .admission-section p {
+    font-size: 1em;
+    margin-bottom: 3%;
+  }
+
+  /* Force vertical stack */
+  .process-container {
+    grid-template-columns: 1fr;
+  }
+
+  .process-card img {
+    height: 16vh;
+  }
+
+  .process-content h3 {
+    font-size: 1.3em;
+  }
+
+  .process-content p {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .admission-section {
+    padding: 3% 1%;
+  }
+
+  .admission-section h2 {
+    font-size: 1.8em;
+  }
+
+  .process-container {
+    gap: 1.5%;
+    grid-template-columns: 1fr; /* small screens vertical */
+  }
+
+  .process-card img {
+    height: 14vh;
+  }
+
+  .process-content h3 {
+    font-size: 1.2em;
+  }
+
+  .process-content p {
+    font-size: 0.9em;
+  }
+}

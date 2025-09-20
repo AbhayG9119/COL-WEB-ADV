@@ -1,0 +1,387 @@
+/* Global Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+body {
+  background-color: #f4f6f8;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* Main Dashboard Container */
+.student-dashboard {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "nav main";
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 60px 1fr;
+  height: 100vh;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.dashboard-header {
+  grid-area: header;
+  background-color: #60a9f1;
+  color: #ecf0f1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-logout {
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #c0392b;
+}
+
+/* Navigation Sidebar */
+.dashboard-nav {
+  grid-area: nav;
+  background-color: #87898b;
+  color: #bdc3c7;
+  padding-top: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+}
+
+.dashboard-nav ul {
+  list-style: none;
+}
+
+.dashboard-nav ul li {
+  padding: 15px 25px;
+  cursor: pointer;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+  transition: background-color 0.3s ease, border-left-color 0.3s ease;
+}
+
+.dashboard-nav ul li:hover {
+  background-color: #3d566e;
+  border-left-color: #2980b9;
+  color: #ecf0f1;
+}
+
+.dashboard-nav ul li.active {
+  background-color: #2980b9;
+  border-left-color: #3498db;
+  color: #ecf0f1;
+  font-weight: 700;
+}
+
+/* Main Content Area */
+.dashboard-main {
+  grid-area: main;
+  padding: 20px 30px;
+  overflow-y: auto;
+  background-color: #ecf0f1;
+  border-left: 1px solid #ddd;
+  min-height: 0; /* for flexbox/grid scrolling */
+}
+
+/* Section Content */
+.section-content {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.section-content h2 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 700;
+  border-bottom: 2px solid #2980b9;
+  padding-bottom: 8px;
+}
+
+/* Profile Card */
+.profile-card p {
+  margin-bottom: 12px;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Buttons */
+button {
+  background-color: #2980b9;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1c5980;
+}
+
+.btn-register {
+  background-color: #27ae60;
+}
+
+.btn-register:hover {
+  background-color: #1e8449;
+}
+
+.btn-submit {
+  background-color: #8e44ad;
+}
+
+.btn-submit:hover {
+  background-color: #6c3483;
+}
+
+.btn-download {
+  background-color: #2980b9;
+}
+
+.btn-download:hover {
+  background-color: #1c5980;
+}
+
+.btn-lms {
+  background-color: #d35400;
+}
+
+.btn-lms:hover {
+  background-color: #a84300;
+}
+
+.btn-pay {
+  background-color: #c0392b;
+}
+
+.btn-pay:hover {
+  background-color: #922b21;
+}
+
+.btn-apply {
+  background-color: #16a085;
+}
+
+.btn-apply:hover {
+  background-color: #117a65;
+}
+
+.btn-renew {
+  background-color: #f39c12;
+}
+
+.btn-renew:hover {
+  background-color: #b9770e;
+}
+
+.btn-send {
+  background-color: #2980b9;
+}
+
+.btn-send:hover {
+  background-color: #1c5980;
+}
+
+.btn-help {
+  background-color: #34495e;
+}
+
+.btn-help:hover {
+  background-color: #2c3e50;
+}
+
+.btn-apply-job {
+  background-color: #2980b9;
+}
+
+.btn-apply-job:hover {
+  background-color: #1c5980;
+}
+
+.btn-route {
+  background-color: #2980b9;
+}
+
+.btn-route:hover {
+  background-color: #1c5980;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background-color: #2980b9;
+  color: white;
+  font-weight: 600;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.status-registered {
+  color: #27ae60;
+  font-weight: 700;
+}
+
+/* Lists */
+.registered-courses {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-top: 10px;
+  color: #555;
+}
+
+.assignment-list, .material-list, .scholarship-list, .job-list, .notice-list, .message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.assignment-item, .material-item, .scholarship-item, .job-item, .notice-item, .message-item {
+  background-color: #fafafa;
+  padding: 15px 20px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.assignment-item.completed {
+  background-color: #dff0d8;
+  border-left: 5px solid #3c763d;
+}
+
+.grade {
+  font-weight: 600;
+  color: #3c763d;
+}
+
+.due-date, .exam-date, .exam-time, .exam-venue, .scholarship-amount, .award-amount, .job-location, .job-salary, .notice-date, .message-date {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 5px;
+}
+
+/* Attendance Summary */
+.attendance-summary {
+  display: flex;
+  gap: 30px;
+  margin-top: 15px;
+}
+
+.attendance-item {
+  background-color: #ecf0f1;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #34495e;
+  display: flex;
+  justify-content: space-between;
+  width: 180px;
+}
+
+.attendance-percentage {
+  color: #27ae60;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn-search {
+  background-color: #2980b9;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-search:hover {
+  background-color: #1c5980;
+}
+
+/* Form Inputs */
+input[type="text"], select, textarea {
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .student-dashboard {
+    grid-template-areas:
+      "header"
+      "main"
+      "nav";
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 1fr 200px;
+  }
+
+  .dashboard-nav {
+    grid-area: nav;
+    height: 200px;
+    border-right: none;
+    border-top: 1px solid #ddd;
+  }
+
+  .dashboard-main {
+    grid-area: main;
+    padding: 15px 20px;
+  }
+
+  .dashboard-nav ul li {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+}
