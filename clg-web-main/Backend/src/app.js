@@ -17,7 +17,6 @@ import academicCellRoutes from './routes/academicCell.routes.js';
 
 const app = express();
 
-
 // Connect to database
 connectDB();
 
@@ -30,8 +29,27 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from uploads directory with CORS middleware
-app.use('/uploads', cors({ origin: 'http://localhost:3000' }), express.static('uploads'));
+// Serve static files from uploads directory with proper CORS headers
+app.use('/uploads', cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}), express.static('uploads'));
+
+// Specific route for profile pictures with CORS headers
+app.get('/uploads/profile-pictures/:filename', cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}), (req, res) => {
+  res.sendFile(req.params.filename, {
+    root: 'uploads/profile-pictures',
+    headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Credentials': 'true'
+    }
+  });
+});
 
 // Rate limiting
 // const limiter = rateLimit({
@@ -52,7 +70,6 @@ app.use('/api/faculty', facultyRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/admin/data', adminDataRoutes);
 app.use('/api/academic-cell', academicCellRoutes);
-
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -4,10 +4,9 @@ import jwt from 'jsonwebtoken';
 import Student from '../models/Student.js';
 import Faculty from '../models/Faculty.js';
 import Admin from '../models/Admin.js';
+import AcademicCell from '../models/AcademicCell.js';
 
 const router = express.Router();
-
-
 
 // Faculty Signup
 router.post('/faculty/signup', async (req, res) => {
@@ -24,8 +23,6 @@ router.post('/faculty/signup', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-
 
 // Faculty Login
 router.post('/faculty/login', async (req, res) => {
@@ -68,6 +65,38 @@ router.post('/student/login', async (req, res) => {
     }
     const token = jwt.sign({ id: student._id, role: student.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.json({ token });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Academic Cell Login
+router.post('/academic-cell/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const academicCell = await AcademicCell.findOne({ email });
+    if (!academicCell || !(await academicCell.comparePassword(password))) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    const token = jwt.sign(
+      {
+        id: academicCell._id,
+        role: academicCell.role || 'academic-cell',
+        email: academicCell.email,
+        username: academicCell.username
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    res.json({
+      token,
+      user: {
+        id: academicCell._id,
+        username: academicCell.username,
+        email: academicCell.email,
+        role: academicCell.role || 'academic-cell'
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
