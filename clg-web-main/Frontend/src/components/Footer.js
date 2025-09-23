@@ -58,7 +58,7 @@ function Footer() {
           <div className="footer-col">
             <h3>Connect With Us</h3>
             <p className="ft-txt">Stay connected for latest updates and announcements.</p>
-            <div className="social-link">
+            <div className="social-links">
               <a href="https://www.facebook.com/Sw.NarendraSinghMahavidyalaya" className="social-icon facebook" aria-label="Facebook">
                 <FaFacebookF />
               </a>
@@ -72,13 +72,7 @@ function Footer() {
                 <FaLinkedin />
               </a>
             </div>
-            <div className="newsletter">
-              <h4>Newsletter</h4>
-              <div className="newsletter-input">
-                <input type="email" placeholder="Enter your email address" />
-                <button type="submit"><FaPaperPlane /></button>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

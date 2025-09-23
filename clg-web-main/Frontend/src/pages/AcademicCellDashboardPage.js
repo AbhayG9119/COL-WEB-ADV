@@ -94,59 +94,66 @@ const AcademicCellDashboardPage = () => {
     });
 
     // Fetch admissions
-    academicCellApi.getAdmissions().then(res => setAdmissions(res.data)).catch(err => {
+    academicCellApi.getAdmissions().then(res => setAdmissions(res.data.data || [])).catch(err => {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
         navigate('/login');
       }
+      setAdmissions([]);
     });
 
     // Fetch pending profiles
-    academicCellApi.getPendingProfiles().then(res => setPendingProfiles(res.data)).catch(err => {
+    academicCellApi.getPendingProfiles().then(res => setPendingProfiles(res.data.data || [])).catch(err => {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
         navigate('/login');
       }
+      setPendingProfiles([]);
     });
 
     // Fetch documents
-    academicCellApi.getDocuments().then(res => setDocuments(res.data)).catch(err => {
+    academicCellApi.getDocuments().then(res => setDocuments(res.data.data || [])).catch(err => {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
         navigate('/login');
       }
+      setDocuments([]);
     });
 
     // Fetch courses
-    academicCellApi.getCourses().then(res => setCourses(res.data)).catch(err => {
+    academicCellApi.getCourses().then(res => setCourses(res.data || [])).catch(err => {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
         navigate('/login');
       }
+      setCourses([]);
     });
 
     // Fetch notifications
-    academicCellApi.getNotifications().then(res => setNotifications(res.data)).catch(err => {
+    academicCellApi.getNotifications().then(res => setNotifications(res.data.data || [])).catch(err => {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
         navigate('/login');
       }
+      setNotifications([]);
     });
 
     // Fetch tasks
-    academicCellApi.getTasks().then(res => setTasks(res.data)).catch(err => {
+    academicCellApi.getTasks().then(res => setTasks(res.data.data || [])).catch(err => {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
         navigate('/login');
       }
+      setTasks([]);
     });
 
     // Fetch communication templates
-    academicCellApi.getCommunicationTemplates().then(res => setCommunicationTemplates(res.data)).catch(err => {
+    academicCellApi.getCommunicationTemplates().then(res => setCommunicationTemplates(res.data || [])).catch(err => {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
         navigate('/login');
       }
+      setCommunicationTemplates([]);
     });
   }, [navigate]);
 
@@ -179,7 +186,8 @@ const AcademicCellDashboardPage = () => {
     { id: 'profiles', name: 'Student Profiles', icon: '👤' },
     { id: 'documents', name: 'Document Verification', icon: '📄' },
     { id: 'courses', name: 'Course & Semester Management', icon: '📚' },
-    { id: 'reports', name: 'Reports & Analytics', icon: '📊' },
+    { id: 'attendance', name: 'Professional Attendance', icon: '📊' },
+    { id: 'reports', name: 'Reports & Analytics', icon: '📈' },
     { id: 'notifications', name: 'Notifications & Tasks', icon: '🔔' },
     { id: 'communication', name: 'Communication', icon: '💬' },
   ];
@@ -368,7 +376,7 @@ const AcademicCellDashboardPage = () => {
                       <tr key={adm.id}>
                         <td>{adm.studentName}</td>
                         <td>{adm.email}</td>
-                        <td><span className={`status ${adm.status.toLowerCase()}`}>{adm.status}</span></td>
+                        <td><span className={`status ${adm.status ? adm.status.toLowerCase() : 'pending'}`}>{adm.status || 'Pending'}</span></td>
                         <td>
                           <button className="btn-sm" onClick={() => {
                             setSelectedStudent(adm);
@@ -542,6 +550,131 @@ const AcademicCellDashboardPage = () => {
             )}
           </div>
         );
+      case 'attendance':
+        return (
+          <div className="module-section">
+            <h2>Professional Attendance Management</h2>
+            <div className="quick-actions">
+              <button className="action-btn primary">View Real-time Dashboard</button>
+              <button className="action-btn secondary">Generate Report</button>
+              <button className="action-btn secondary">Export Data</button>
+            </div>
+
+            {/* Real-time Status */}
+            <div className="real-time-status">
+              <div className="status-indicator">
+                <span className="live-dot"></span>
+                <span>Live Updates Active</span>
+              </div>
+              <div className="last-updated">
+                Last updated: {new Date().toLocaleTimeString()}
+              </div>
+            </div>
+
+            {/* Attendance Overview Cards */}
+            <div className="attendance-overview">
+              <div className="overview-card">
+                <div className="card-icon">📊</div>
+                <div className="card-content">
+                  <div className="card-number">1,247</div>
+                  <div className="card-label">Total Records Today</div>
+                </div>
+              </div>
+              <div className="overview-card">
+                <div className="card-icon">✅</div>
+                <div className="card-content">
+                  <div className="card-number">892</div>
+                  <div className="card-label">Present Today</div>
+                </div>
+              </div>
+              <div className="overview-card">
+                <div className="card-icon">❌</div>
+                <div className="card-content">
+                  <div className="card-number">234</div>
+                  <div className="card-label">Absent Today</div>
+                </div>
+              </div>
+              <div className="overview-card">
+                <div className="card-icon">⏰</div>
+                <div className="card-content">
+                  <div className="card-number">121</div>
+                  <div className="card-label">Late Today</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Real-time Activity Feed */}
+            <div className="activity-feed">
+              <h3>Recent Activity</h3>
+              <div className="activity-list">
+                <div className="activity-item">
+                  <div className="activity-time">2 mins ago</div>
+                  <div className="activity-content">
+                    <strong>John Doe</strong> marked present for Computer Science - Data Structures
+                  </div>
+                </div>
+                <div className="activity-item">
+                  <div className="activity-time">5 mins ago</div>
+                  <div className="activity-content">
+                    <strong>Jane Smith</strong> marked absent for Mathematics - Calculus
+                  </div>
+                </div>
+                <div className="activity-item">
+                  <div className="activity-time">8 mins ago</div>
+                  <div className="activity-content">
+                    <strong>Bob Johnson</strong> updated attendance for Physics - Mechanics
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Department-wise Attendance */}
+            <div className="department-attendance">
+              <h3>Department-wise Attendance</h3>
+              <div className="department-grid">
+                <div className="department-card">
+                  <div className="department-name">Computer Science</div>
+                  <div className="department-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Present:</span>
+                      <span className="stat-value">156/180</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Attendance:</span>
+                      <span className="stat-value">86.7%</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="department-card">
+                  <div className="department-name">Mathematics</div>
+                  <div className="department-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Present:</span>
+                      <span className="stat-value">89/95</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Attendance:</span>
+                      <span className="stat-value">93.7%</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="department-card">
+                  <div className="department-name">Physics</div>
+                  <div className="department-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Present:</span>
+                      <span className="stat-value">134/150</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Attendance:</span>
+                      <span className="stat-value">89.3%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       default:
         return <div className="module-section"><h2>{modules.find(m => m.id === activeModule)?.name}</h2><p>Content coming soon...</p></div>;
     }
@@ -620,6 +753,11 @@ const AcademicCellDashboardPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Module Content */}
+        <div className="module-content">
+          {renderModuleContent()}
+        </div>
       </main>
     </div>
   );

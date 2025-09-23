@@ -537,3 +537,541 @@
   opacity: 0;
   animation-fill-mode: forwards;
 }
+
+/* Edit Profile Form Styles */
+.edit-profile-form {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  margin-top: 2rem;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.edit-profile-form h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 1.5rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.edit-profile-form .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.edit-profile-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.edit-profile-form input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.edit-profile-form input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.edit-profile-form .form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.edit-profile-form .form-actions .action-btn {
+  min-width: 120px;
+}
+
+/* Search and Filter Section */
+.search-filter-section {
+  margin-bottom: 2rem;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+  max-width: 400px;
+}
+
+.search-box:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.95rem;
+  color: #2d3748;
+}
+
+.search-box input::placeholder {
+  color: #a0aec0;
+}
+
+.search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #667eea;
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.search-btn:hover {
+  background: #f7fafc;
+  color: #4c51bf;
+}
+
+/* Pagination Styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #e2e8f0;
+  background: white;
+  color: #4a5568;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: #667eea;
+  color: #667eea;
+  background: #f8fafc;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  color: #4a5568;
+  font-weight: 500;
+}
+
+/* Responsive Design for Forms */
+@media (max-width: 768px) {
+  .edit-profile-form {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .edit-profile-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .edit-profile-form .form-actions {
+    flex-direction: column;
+  }
+
+  .edit-profile-form .form-actions .action-btn {
+    width: 100%;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-profile-form h3 {
+    font-size: 1.25rem;
+  }
+
+  .edit-profile-form input {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Professional Attendance Management Styles */
+.real-time-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+  border: 1px solid #c6f6d5;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #38a169;
+  font-weight: 600;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38a169;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.last-updated {
+  color: #718096;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Attendance Overview Cards */
+.attendance-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.overview-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.overview-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.overview-card:nth-child(1)::before {
+  background: linear-gradient(90deg, #48bb78, #38a169);
+}
+
+.overview-card:nth-child(2)::before {
+  background: linear-gradient(90deg, #ed8936, #dd6b20);
+}
+
+.overview-card:nth-child(3)::before {
+  background: linear-gradient(90deg, #f56565, #e53e3e);
+}
+
+.overview-card:nth-child(4)::before {
+  background: linear-gradient(90deg, #ed8936, #dd6b20);
+}
+
+.card-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.overview-card:nth-child(1) .card-icon {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+.overview-card:nth-child(2) .card-icon {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.overview-card:nth-child(3) .card-icon {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+}
+
+.overview-card:nth-child(4) .card-icon {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0;
+  line-height: 1;
+}
+
+.card-label {
+  font-size: 0.9rem;
+  color: #718096;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Activity Feed */
+.activity-feed {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.6s ease-out 0.2s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.activity-feed h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: #718096;
+  font-weight: 500;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.activity-content {
+  flex: 1;
+  color: #2d3748;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Department-wise Attendance */
+.department-attendance {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  animation: fadeInUp 0.6s ease-out 0.4s;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.department-attendance h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 1.5rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.department-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.department-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.department-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.department-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.department-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 1rem 0;
+}
+
+.department-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  color: #718096;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  color: #2d3748;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Responsive Design for Attendance Module */
+@media (max-width: 768px) {
+  .real-time-status {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .attendance-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .department-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .activity-time {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .attendance-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-card {
+    padding: 1rem;
+  }
+
+  .card-number {
+    font-size: 1.5rem;
+  }
+
+  .activity-feed,
+  .department-attendance {
+    padding: 1rem;
+  }
+
+  .department-card {
+    padding: 1rem;
+  }
+}

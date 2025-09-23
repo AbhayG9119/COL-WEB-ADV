@@ -21,10 +21,14 @@
 .logo-title {
   display: flex;
   align-items: center;
-  /* gap: 12px; */
   font-size: 1.1rem;
   font-weight: bold;
 }
+
+.logo-title span {
+  color: #fff;   
+}
+
 
 .logo-title img {
   height: 45px;
@@ -53,6 +57,7 @@
   white-space: nowrap; /* force ek line me rakhne ke liye */
   text-align: center;
 }
+
 
 .menu li a:hover {
   background: rgba(255, 255, 255, 0.1);
@@ -83,7 +88,7 @@
 
 .signup-btn:hover {
   background: #f0f0f0;
-  color: #b81616 !important;
+  color: #b81616 ;
 }
 
 /* Dropdown */
@@ -105,13 +110,19 @@
   display: flex;
 }
 
+.dropdown{
+  position: relative;
+  text-align: center;
+}
+
 /* Dropdown Menu Items */
 .dropdown-menu li a {
-  padding: 14px 18px;   /* height increase (pehle 12px 16px tha) */
+  padding: 12px 16px;  
   font-size: 0.95rem;
   display: block;
   text-align: center;
 }
+
 
 .dropdown-menu li a:hover {
   background: rgba(255, 255, 255, 0.2);
@@ -145,15 +156,15 @@
     border-radius: 10px;
     width: 180px;
     padding: 20px 0;
-    gap: 15px;
+    gap: 12px;
   }
 
   .menu.active {
-    display: flex; /* Toggle menu open/close */
+    display: flex;
   }
 
   .menu-toggle {
-    display: flex; /* Hamburger visible on mobile */
+    display: flex;
   }
 
   /* Keep existing submenu styling as-is */

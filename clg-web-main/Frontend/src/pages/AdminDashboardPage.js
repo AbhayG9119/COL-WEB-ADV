@@ -39,6 +39,14 @@ const AdminDashboardPage = () => {
   const [hods, setHods] = useState([]);
   const [students, setStudents] = useState([]);
 
+  // Pagination state for different sections
+  const [contactsCurrentPage, setContactsCurrentPage] = useState(1);
+  const [contactsTotalPages, setContactsTotalPages] = useState(1);
+  const [queriesCurrentPage, setQueriesCurrentPage] = useState(1);
+  const [queriesTotalPages, setQueriesTotalPages] = useState(1);
+  const [nccCurrentPage, setNccCurrentPage] = useState(1);
+  const [nccTotalPages, setNccTotalPages] = useState(1);
+
   useEffect(() => {
     // Check authentication
     const token = adminAuth.getToken();
@@ -72,7 +80,7 @@ const AdminDashboardPage = () => {
     }
   }, [navigate]);
 
-  // Fetch data when module changes
+  // Fetch data when module changes or pagination changes
   useEffect(() => {
     if (activeModule === 'profiles') {
       fetchStudentProfiles();
@@ -91,7 +99,7 @@ const AdminDashboardPage = () => {
     } else if (activeModule === 'students') {
       fetchStudents();
     }
-  }, [activeModule, currentPage, searchTerm]);
+  }, [activeModule, currentPage, searchTerm, contactsCurrentPage, queriesCurrentPage, nccCurrentPage]);
 
   const fetchMetrics = async () => {
     try {
@@ -146,11 +154,11 @@ const AdminDashboardPage = () => {
 
   const fetchContacts = async () => {
     try {
-      const params = { page: currentPage, limit: 10, search: searchTerm };
+      const params = { page: contactsCurrentPage, limit: 10, search: searchTerm };
       const response = await adminData.getContacts(params);
       if (response.success) {
         setContacts(response.data);
-        setTotalPages(response.pagination.totalPages);
+        setContactsTotalPages(response.pagination.totalPages);
       }
     } catch (error) {
       console.error('Error fetching contacts:', error);
@@ -159,11 +167,11 @@ const AdminDashboardPage = () => {
 
   const fetchAdmissionQueries = async () => {
     try {
-      const params = { page: currentPage, limit: 10, search: searchTerm };
+      const params = { page: queriesCurrentPage, limit: 10, search: searchTerm };
       const response = await adminData.getAdmissionQueries(params);
       if (response.success) {
         setAdmissionQueries(response.data);
-        setTotalPages(response.pagination.totalPages);
+        setQueriesTotalPages(response.pagination.totalPages);
       }
     } catch (error) {
       console.error('Error fetching admission queries:', error);
@@ -172,11 +180,11 @@ const AdminDashboardPage = () => {
 
   const fetchNccQueries = async () => {
     try {
-      const params = { page: currentPage, limit: 10, search: searchTerm };
+      const params = { page: nccCurrentPage, limit: 10, search: searchTerm };
       const response = await adminData.getNCCQueries(params);
       if (response.success) {
         setNccQueries(response.data);
-        setTotalPages(response.pagination.totalPages);
+        setNccTotalPages(response.pagination.totalPages);
       }
     } catch (error) {
       console.error('Error fetching NCC queries:', error);
@@ -514,6 +522,23 @@ const AdminDashboardPage = () => {
                   )}
                 </tbody>
               </table>
+
+              {/* Pagination */}
+              <div className="pagination">
+                <button
+                  onClick={() => setContactsCurrentPage(contactsCurrentPage - 1)}
+                  disabled={contactsCurrentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>Page {contactsCurrentPage} of {contactsTotalPages}</span>
+                <button
+                  onClick={() => setContactsCurrentPage(contactsCurrentPage + 1)}
+                  disabled={contactsCurrentPage === contactsTotalPages}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -552,6 +577,23 @@ const AdminDashboardPage = () => {
                   ))}
                 </tbody>
               </table>
+
+              {/* Pagination */}
+              <div className="pagination">
+                <button
+                  onClick={() => setQueriesCurrentPage(queriesCurrentPage - 1)}
+                  disabled={queriesCurrentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>Page {queriesCurrentPage} of {queriesTotalPages}</span>
+                <button
+                  onClick={() => setQueriesCurrentPage(queriesCurrentPage + 1)}
+                  disabled={queriesCurrentPage === queriesTotalPages}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -590,6 +632,23 @@ const AdminDashboardPage = () => {
                   ))}
                 </tbody>
               </table>
+
+              {/* Pagination */}
+              <div className="pagination">
+                <button
+                  onClick={() => setNccCurrentPage(nccCurrentPage - 1)}
+                  disabled={nccCurrentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>Page {nccCurrentPage} of {nccTotalPages}</span>
+                <button
+                  onClick={() => setNccCurrentPage(nccCurrentPage + 1)}
+                  disabled={nccCurrentPage === nccTotalPages}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         );

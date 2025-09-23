@@ -8,7 +8,6 @@
 body {
   background: #f4f7fa;
   line-height: 1.6;
-  /* font-family: Arial, sans-serif; */
 }
 
 .container {
@@ -98,25 +97,23 @@ h2 {
 /* Scholarship Page Styles */
 .scholarship-header {
   text-align: center;
-  margin-bottom: 50px;
-  padding: 40px 20px;
-  background: #daeef7;
-  color: #b81616;
-  border-radius: 20px;
-  max-width: calc(100% - 40px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  margin-left: 20px;
 }
 
 .scholarship-header h1 {
-  font-size: 2.5rem;
+ font-size: 2.5rem;
   margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  color: #b81616;
+  margin-top: 5%;
 }
 
-.scholarship-header p {
+.para {
   font-size: 1.2rem;
-  margin: 0;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+  color: black;
+  margin-bottom: 5%;
 }
 
 .scholarship-container {
@@ -150,6 +147,7 @@ h2 {
 .scholarship-card ul {
   margin: 0;
   padding-left: 20px;
+
 }
 
 .scholarship-card ul li {
@@ -174,14 +172,52 @@ h2 {
 .financial-info p {
   line-height: 1.7;
   margin: 0;
+  font-size: 1.1rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .scholarship-header h1 {
     font-size: 2rem;
   }
 
-  .scholarship-header p {
+  .para {
+    font-size: 1rem;
+    max-width: 90%;
+    padding: 0 10px;
+  }
+
+  .scholarship-container {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
+
+  .scholarship-card {
+    padding: 15px;
+  }
+
+  .financial-info {
+    padding: 20px 10px;
+    margin: 20px 10px;
+  }
+
+  .requirements {
+    padding: 20px 10px;
+    margin: 20px 10px 40px 10px;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  .scholarship-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .scholarship-buttons a {
+    min-width: auto;
+    width: 100%;
+    padding: 12px 0;
     font-size: 1rem;
   }
 }
@@ -214,4 +250,16 @@ h2 {
 
 .requirements ul li {
   margin-bottom: 10px;
+}
+
+@media (max-width: 480px) {
+  .scholarship-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .para {
+    font-size: 1rem;
+    max-width: 90%;
+    padding: 0 10px;
+  }
 }

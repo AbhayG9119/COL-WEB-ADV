@@ -21,7 +21,7 @@
 .headquote-scroll p {
   display: inline-block;
   padding-left: 100%;
-  animation: scroll-text 15s linear infinite;
+  animation: scroll-text 30s linear infinite;
 }
 
 @keyframes scroll-text {
@@ -97,6 +97,7 @@
 .head-title {
   font-size: 18px;
   margin: 0;
+  color: #fff;
 }
 
 /* Lists */
@@ -176,109 +177,132 @@
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-  text-align: left;
-}
-
-
-
-.footer-logo {
-  width: 80px;
-  height: auto;
-  margin-bottom: 10px;
-}
-
-.footer-branding h3 {
-  font-size: 20px;
-  margin-bottom: 5px;
-}
-
-.tagline {
-  font-style: italic;
-  color: #ccc;
-}
-
-.quick-links {
-  list-style: none;
-  padding: 0;
-}
-
-.quick-links li {
-  margin-bottom: 8px;
-}
-
-.quick-links a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.quick-links a:hover {
-  text-decoration: underline;
-}
-
-.contact-info p {
-  margin-bottom: 10px;
-}
-
-.contact-info a {
-  color: #00aed9;
-  text-decoration: none;
-}
-
-.contact-info a:hover {
-  text-decoration: underline;
-}
-
-.social-media-icons {
-  display: flex;
-  gap: 10px;
-}
-
-.social-icon {
-  color: #fff;
-  font-size: 20px;
-  text-decoration: none;
-}
-
-.social-icon:hover {
-  color: #00aed9;
-}
-
-.footer-bottom {
-  border-top: 1px solid #555;
-  margin-top: 30px;
-  padding-top: 20px;
-  text-align: center;
-}
-
-.copyright-container p {
-  margin: 0;
-  font-size: 14px;
 }
 
 /* Responsive */
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 18px;
+  }
+
   .card {
-    flex: 1 1 calc(50% - 20px);
+    padding: 18px;
   }
-  .footer-col {
-    flex: 1 1 calc(50% - 30px);
+
+  .why-choose h2 {
+    font-size: 2.2rem;
   }
-  .hero-img img {
-    height: 300px;
+
+  .why-choose p {
+    font-size: 1.1rem;
+  }
+
+  .head-title {
+    font-size: 16px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .main-sections {
+    gap: 15px;
+  }
+
+  .card {
+    flex: 1 1 calc(50% - 15px);
+    padding: 15px;
+    min-height: 300px;
+  }
+
+  .heading-sect {
+    padding: 8px;
+  }
+
+  .head-title {
+    font-size: 16px;
+  }
+
+  .why-choose {
+    padding: 40px 0;
+  }
+
+  .why-choose h2 {
+    font-size: 2rem;
+  }
+
+  .why-choose p {
+    font-size: 1rem;
+  }
+
+  .footer-container {
+    gap: 20px;
+  }
+
+  .footer-col {
+    flex: 1 1 calc(50% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .main-sections {
+    margin-top: 120px;
+    gap: 10px;
+  }
+
   .card {
     flex: 1 1 100%;
+    padding: 15px;
+    min-height: 250px;
   }
-  .footer-col {
-    flex: 1 1 100%;
+
+  .heading-sect {
+    padding: 8px;
   }
+
+  .head-title {
+    font-size: 14px;
+  }
+
+  .why-choose {
+    padding: 30px 0;
+  }
+
+  .why-choose h2 {
+    font-size: 1.8rem;
+  }
+
+  .why-choose p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .container {
+    padding: 0 10px;
+  }
+
   .main-sections {
     margin-top: 100px;
+    gap: 8px;
   }
-  .hero-img img {
-    height: 200px;
+
+  .card {
+    padding: 12px;
+    min-height: 200px;
+  }
+
+  .head-title {
+    font-size: 12px;
+  }
+
+  .why-choose h2 {
+    font-size: 1.5rem;
+  }
+
+  .why-choose p {
+    font-size: 0.9rem;
   }
 }

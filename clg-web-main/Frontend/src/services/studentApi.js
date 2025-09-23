@@ -54,6 +54,7 @@ const studentApi = {
       },
     }),
   getAttendance: () => axiosInstance.get('/attendance'),
+  getAttendanceRecords: () => axiosInstance.get('/attendance'),
   getExamResults: () => axiosInstance.get('/exam-results'),
   getStudyMaterials: () => axiosInstance.get('/study-materials'),
   getCourseContent: () => axiosInstance.get('/course-content'),

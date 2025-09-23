@@ -17,31 +17,90 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Add a response interceptor to handle global errors
+// Add a response interceptor to handle global errors including 401
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // You can handle global errors here, e.g., logout on 401
+    if (error.response && error.response.status === 401) {
+      // Token is invalid or expired, logout user
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
 
 const academicCellApi = {
-  getMetrics: () => axiosInstance.get('/metrics'),
-  getAdmissions: () => axiosInstance.get('/admissions'),
-  getPendingProfiles: () => axiosInstance.get('/pending-profiles'),
-  getDocuments: () => axiosInstance.get('/documents'),
-  getCourses: () => axiosInstance.get('/courses'),
-  getNotifications: () => axiosInstance.get('/notifications'),
-  getTasks: () => axiosInstance.get('/tasks'),
-  getCommunicationTemplates: () => axiosInstance.get('/communication-templates'),
-  saveDetailedProfile: (profileData) => axiosInstance.post('/detailed-profile', profileData),
+  // Authentication
+  login: async (email, password) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/academic-cell/login', {
+        email,
+        password
+      });
+      return {
+        success: true,
+        token: response.data.token,
+        user: response.data.user
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Login failed'
+      };
+    }
+  },
+
+  // Dashboard API calls
+  getDashboardMetrics: () => axiosInstance.get('/dashboard/metrics'),
+
+  // Student Management
+  getStudents: (params = {}) => axiosInstance.get('/students', { params }),
+  getStudentById: (id) => axiosInstance.get(`/students/${id}`),
+  updateStudentStatus: (id, statusData) => axiosInstance.patch(`/students/${id}/status`, statusData),
 
   // Student Profile Management
   getStudentProfiles: (params = {}) => axiosInstance.get('/student-profiles', { params }),
   getStudentProfile: (id) => axiosInstance.get(`/student-profiles/${id}`),
-  getStudentProfileByStudentId: (studentId) => axiosInstance.get(`/student-profile/${studentId}`),
   updateStudentProfile: (id, profileData) => axiosInstance.put(`/student-profiles/${id}`, profileData),
+
+  // Course Management
+  getCourses: () => axiosInstance.get('/courses'),
+  createCourse: (courseData) => axiosInstance.post('/courses', courseData),
+  updateCourse: (id, courseData) => axiosInstance.put(`/courses/${id}`, courseData),
+
+  // Document Management
+  getDocuments: (params = {}) => axiosInstance.get('/documents', { params }),
+  verifyDocument: (id, verificationData) => axiosInstance.patch(`/documents/${id}/verify`, verificationData),
+
+  // Task Management
+  getTasks: (params = {}) => axiosInstance.get('/tasks', { params }),
+  createTask: (taskData) => axiosInstance.post('/tasks', taskData),
+  updateTaskStatus: (id, statusData) => axiosInstance.patch(`/tasks/${id}/status`, statusData),
+
+  // Communication Templates
+  getCommunicationTemplates: () => axiosInstance.get('/communication-templates'),
+  createCommunicationTemplate: (templateData) => axiosInstance.post('/communication-templates', templateData),
+
+  // Notifications
+  getNotifications: (params = {}) => axiosInstance.get('/notifications', { params }),
+  createNotification: (notificationData) => axiosInstance.post('/notifications', notificationData),
+
+  // Profile Management
+  getProfile: () => axiosInstance.get('/profile'),
+  updateProfile: (profileData) => axiosInstance.patch('/profile', profileData),
+
+  // Legacy methods (for backward compatibility)
+  getMetrics: () => axiosInstance.get('/dashboard/metrics'),
+  getAdmissions: () => axiosInstance.get('/students'),
+  getPendingProfiles: () => axiosInstance.get('/student-profiles'),
+  getDocuments: () => axiosInstance.get('/documents'),
+  getNotifications: () => axiosInstance.get('/notifications'),
+  getTasks: () => axiosInstance.get('/tasks'),
+  getCommunicationTemplates: () => axiosInstance.get('/communication-templates'),
+  saveDetailedProfile: (profileData) => axiosInstance.post('/student-profiles', profileData),
+  getStudentProfileByStudentId: (studentId) => axiosInstance.get(`/student-profiles?studentId=${studentId}`),
 };
 
 export default academicCellApi;

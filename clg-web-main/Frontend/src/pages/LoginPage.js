@@ -28,6 +28,12 @@ function LoginPage() {
         } else {
           setError(result.error);
         }
+      } else if (role === 'academic-cell') {
+        response = await axios.post('http://localhost:5000/api/auth/academic-cell/login', { email, password });
+        const { token } = response.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', role);
+        navigate('/academic-cell-dashboard');
       } else if (role === 'faculty') {
         response = await axios.post('http://localhost:5000/api/auth/faculty/login', { email, password });
         const { token } = response.data;
@@ -69,6 +75,7 @@ function LoginPage() {
             >
               <option value="student">Student</option>
               <option value="faculty">Faculty</option>
+              <option value="academic-cell">Academic Cell</option>
               <option value="admin">Admin</option>
             </select>
           </div>
@@ -112,6 +119,12 @@ function LoginPage() {
         {role === 'admin' && (
           <p className="signup-link">
             Admin login requires admin credentials
+          </p>
+        )}
+
+        {role === 'academic-cell' && (
+          <p className="signup-link">
+            Academic Cell login for academic administration
           </p>
         )}
 
