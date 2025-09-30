@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -14,9 +16,17 @@ import {
 } from 'chart.js';
 import facultyApi from '../services/facultyApi';
 import '../styles/StudentDashboard.css'; // Reuse student dashboard styles
-import '../styles/ProfessionalAttendance.css'; // Professional attendance styles
+
 
 const BACKEND_BASE_URL = 'http://localhost:5000';
+
+// Predefined subjects for college courses
+const PREDEFINED_SUBJECTS = [
+  "Mathematics", "Physics", "Chemistry", "Biology", "English", "History",
+  "Computer Science", "Economics", "Accounting", "Business Studies",
+  "Statistics", "Geography", "Political Science", "Sociology", "Psychology",
+  "Philosophy", "Hindi", "Sanskrit"
+];
 
 ChartJS.register(
   CategoryScale,
@@ -29,37 +39,20 @@ ChartJS.register(
   Legend
 );
 
+
 // @ts-nocheck
 
 function FacultyDashboardPage() {
   const [profile, setProfile] = useState(null);
   const [events, setEvents] = useState([]);
   const [students, setStudents] = useState([]);
-  const [allStudents, setAllStudents] = useState([]);
-  const [attendanceRecords, setAttendanceRecords] = useState([]);
-  const [attendanceStats, setAttendanceStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeSection, setActiveSection] = useState('profile');
   const [newEvent, setNewEvent] = useState({ title: '', description: '', date: '', time: '', venue: '', organizer: '' });
 
-  // Enhanced attendance state
-  const [attendanceForm, setAttendanceForm] = useState({
-    date: new Date().toISOString().split('T')[0],
-    subject: '',
-    department: 'all'
-  });
-  const [studentAttendance, setStudentAttendance] = useState({});
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredStudents, setFilteredStudents] = useState([]);
-  const [todayAttendance, setTodayAttendance] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [showAttendanceHistory, setShowAttendanceHistory] = useState(false);
-  const [dailyAttendanceRecords, setDailyAttendanceRecords] = useState([]);
-  const [dayWiseAttendance, setDayWiseAttendance] = useState([]);
-  const [showDayWiseView, setShowDayWiseView] = useState(false);
-  const [dayWiseLoading, setDayWiseLoading] = useState(false);
-  const [dayWiseError, setDayWiseError] = useState('');
+
+
 
   // Enhanced Dashboard States
   const [totals, setTotals] = useState({
@@ -68,49 +61,56 @@ function FacultyDashboardPage() {
     totalEvents: 0,
     totalNotices: 0
   });
-  const [trendsData, setTrendsData] = useState([]);
   const [performanceData, setPerformanceData] = useState([]);
   const [recentNotices, setRecentNotices] = useState([]);
+
+  // Attendance-related states
+  const [assignedClasses, setAssignedClasses] = useState([]);
+  const [selectedClass, setSelectedClass] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [studentsForClass, setStudentsForClass] = useState([]);
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [attendanceDraft, setAttendanceDraft] = useState({});
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
+  const [attendanceError, setAttendanceError] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const navigate = useNavigate();
 
   // New state variables for enhanced sections
-  const [faculty, setFaculty] = useState([]);
   const [results, setResults] = useState([]);
   const [fees, setFees] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [notices, setNotices] = useState([]);
-  const [newFaculty, setNewFaculty] = useState({ username: '', email: '', department: '', role: 'faculty' });
-  const [newStudent, setNewStudent] = useState({ username: '', email: '', department: '' });
+
   const [newResult, setNewResult] = useState({ studentId: '', subject: '', marks: '', grade: '' });
   const [newFee, setNewFee] = useState({ studentId: '', amount: '', description: '', dueDate: '' });
   const [newNotice, setNewNotice] = useState({ title: '', content: '', priority: 'normal' });
-  const [editingFaculty, setEditingFaculty] = useState(null);
-  const [editingStudent, setEditingStudent] = useState(null);
+
   const [editingResult, setEditingResult] = useState(null);
   const [editingFee, setEditingFee] = useState(null);
   const [bulkUploadFile, setBulkUploadFile] = useState(null);
   const [reportType, setReportType] = useState('attendance');
-  const [selectedSubject, setSelectedSubject] = useState('');
   const [notificationMessage, setNotificationMessage] = useState('');
   const [selectedStudents, setSelectedStudents] = useState([]);
 
   // Profile editing state
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({
     // Contact Details (editable fields for faculty)
+    fullName: '',
     officialEmail: '',
     mobileNumber: '',
-    officeRoom: '',
+    address: '',
 
     // Professional Details
+    department: '',
+    designation: '',
     subjectsTaught: [],
     teachingExperience: '',
-    specialization: [],
-    researchInterests: [],
-    publications: [],
-    certifications: [],
-    achievements: [],
+    dateOfJoining: '',
 
     // Administrative Roles
     administrativeRoles: [],
@@ -119,9 +119,7 @@ function FacultyDashboardPage() {
     weeklyTimetable: {},
     leaveRecords: [],
 
-    // Additional
-    shortBio: '',
-    officeHours: '',
+    status: 'active',
   });
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [documentFiles, setDocumentFiles] = useState({
@@ -134,11 +132,50 @@ function FacultyDashboardPage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
+
     if (!token || role !== 'faculty') {
       navigate('/login');
       return;
     }
+
+    // Check token expiration
+    try {
+      const decoded = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      if (decoded.exp < currentTime) {
+        console.warn('Token expired, logging out');
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        navigate('/login');
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to decode token:', err);
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      navigate('/login');
+      return;
+    }
+
+    // Setup axios interceptor for 401 errors
+    const interceptorId = axios.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response && error.response.status === 401) {
+          console.warn('401 Unauthorized detected, redirecting to login');
+          localStorage.removeItem('token');
+          localStorage.removeItem('role');
+          navigate('/login');
+        }
+        return Promise.reject(error);
+      }
+    );
+
     fetchData();
+
+    return () => {
+      axios.interceptors.response.eject(interceptorId);
+    };
   }, [navigate]);
 
   const fetchData = async () => {
@@ -154,17 +191,11 @@ function FacultyDashboardPage() {
       const studentsResponse = await facultyApi.getStudents();
       setStudents(studentsResponse.data);
 
-      const attendanceResponse = await facultyApi.getAttendanceRecords();
-      setAttendanceRecords(attendanceResponse.data);
-
       // Load new data for enhanced sections
       await loadEnhancedData();
 
       // Load enhanced dashboard data
       await loadEnhancedDashboardData();
-
-      // Load today's attendance
-      await loadTodayAttendance();
     } catch (err) {
       setError('An error occurred while fetching data');
     }
@@ -174,48 +205,42 @@ function FacultyDashboardPage() {
   const loadFacultyProfile = async () => {
     try {
       const profileResponse = await facultyApi.getProfile();
+      console.log('Profile response:', profileResponse.data);
       setProfile(profileResponse.data);
       // Initialize form with current profile data (only editable fields for faculty)
       setProfileForm({
         fullName: profileResponse.data.fullName || '',
+        officialEmail: profileResponse.data.officialEmail || profileResponse.data.email || '',
+        mobileNumber: profileResponse.data.mobileNumber || '',
         employeeId: profileResponse.data.employeeId || '',
         department: profileResponse.data.department || '',
         designation: profileResponse.data.designation || '',
         dateOfJoining: profileResponse.data.dateOfJoining ? new Date(profileResponse.data.dateOfJoining).toISOString().split('T')[0] : '',
-        officialEmail: profileResponse.data.officialEmail || '',
-        mobileNumber: profileResponse.data.mobileNumber || '',
-        officeRoom: profileResponse.data.officeRoom || '',
+        address: profileResponse.data.address || '',
         subjectsTaught: Array.isArray(profileResponse.data.subjectsTaught) ? profileResponse.data.subjectsTaught : [],
         teachingExperience: profileResponse.data.teachingExperience || '',
-        specialization: Array.isArray(profileResponse.data.specialization) ? profileResponse.data.specialization : [],
-        researchInterests: Array.isArray(profileResponse.data.researchInterests) ? profileResponse.data.researchInterests : [],
-        publications: Array.isArray(profileResponse.data.publications) ? profileResponse.data.publications : [],
-        certifications: Array.isArray(profileResponse.data.certifications) ? profileResponse.data.certifications : [],
-        achievements: Array.isArray(profileResponse.data.achievements) ? profileResponse.data.achievements : [],
         administrativeRoles: Array.isArray(profileResponse.data.administrativeRoles) ? profileResponse.data.administrativeRoles : [],
         weeklyTimetable: profileResponse.data.weeklyTimetable || {},
         leaveRecords: Array.isArray(profileResponse.data.leaveRecords) ? profileResponse.data.leaveRecords : [],
-        shortBio: profileResponse.data.shortBio || '',
-        officeHours: profileResponse.data.officeHours || '',
+        status: profileResponse.data.status || 'active',
       });
     } catch (err) {
       console.log('Failed to load faculty profile:', err);
-      // Fallback to basic profile
-      setProfile({ username: 'Faculty User', department: 'Computer Science' });
+      // No profile exists, set to null to trigger create profile mode
+      setProfile(null);
+      setIsCreatingProfile(true);
     }
   };
 
   const loadEnhancedData = async () => {
     try {
-      const [facultyRes, resultsRes, feesRes, documentsRes, noticesRes] = await Promise.all([
-        facultyApi.getFaculty(),
+      const [resultsRes, feesRes, documentsRes, noticesRes] = await Promise.all([
         facultyApi.getResults(),
         facultyApi.getFees(),
         facultyApi.getDocuments(),
         facultyApi.getNotices()
       ]);
 
-      setFaculty(facultyRes.data);
       setResults(resultsRes.data);
       setFees(feesRes.data);
       setDocuments(documentsRes.data);
@@ -225,25 +250,13 @@ function FacultyDashboardPage() {
     }
   };
 
-  const loadTodayAttendance = async () => {
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const response = await facultyApi.getAttendanceByDate(today);
-      setTodayAttendance(response.data);
-    } catch (err) {
-      console.log('No attendance data for today');
-    }
-  };
+
 
   const loadEnhancedDashboardData = async () => {
     try {
       // Load totals
       const totalsResponse = await facultyApi.getDashboardTotals();
       setTotals(totalsResponse.data);
-
-      // Load trends data (last 30 days)
-      const trendsResponse = await facultyApi.getAttendanceTrends();
-      setTrendsData(trendsResponse.data);
 
       // Load performance data
       const performanceResponse = await facultyApi.getPerformanceData();
@@ -254,6 +267,8 @@ function FacultyDashboardPage() {
       setRecentNotices(noticesResponse.data);
     } catch (err) {
       console.log('Some enhanced dashboard data failed to load:', err);
+      // Set defaults on error to prevent UI breakage
+      setPerformanceData([]);
     }
   };
 
@@ -293,10 +308,10 @@ function FacultyDashboardPage() {
     }
   };
 
-  const handleSaveProfile = async () => {
+  const handleCreateProfile = async () => {
     setProfileLoading(true);
     try {
-      // Update profile data (text fields)
+      // Create profile data using updateProfile since faculty exists
       const response = await facultyApi.updateProfile(profileForm);
       setProfile(response.data.faculty || response.data);
 
@@ -312,6 +327,39 @@ function FacultyDashboardPage() {
       if (documentFiles.idProof || documentFiles.qualificationCertificates.length > 0 || documentFiles.appointmentLetter) {
         await facultyApi.uploadDocuments(documentFiles);
       }
+
+      setIsCreatingProfile(false);
+      setProfilePictureFile(null);
+      setDocumentFiles({
+        idProof: null,
+        qualificationCertificates: [],
+        appointmentLetter: null
+      });
+      alert('Profile created successfully!');
+    } catch (err) {
+      setError('Failed to create profile');
+    }
+    setProfileLoading(false);
+  };
+
+  const handleSaveProfile = async () => {
+    setProfileLoading(true);
+    try {
+      // Update profile data (text fields)
+      await facultyApi.updateProfile(profileForm);
+
+      // Upload profile picture if selected
+      if (profilePictureFile) {
+        await facultyApi.uploadProfilePicture(profilePictureFile);
+      }
+
+      // Upload documents if selected
+      if (documentFiles.idProof || documentFiles.qualificationCertificates.length > 0 || documentFiles.appointmentLetter) {
+        await facultyApi.uploadDocuments(documentFiles);
+      }
+
+      // Reload profile to get updated data
+      await loadFacultyProfile();
 
       setIsEditingProfile(false);
       setProfilePictureFile(null);
@@ -356,41 +404,6 @@ function FacultyDashboardPage() {
       setError('Failed to create notice');
     }
   };
-
-  // Faculty Management
-  const handleCreateFaculty = async (e) => {
-    e.preventDefault();
-    try {
-      await facultyApi.createFaculty(newFaculty);
-      setNewFaculty({ username: '', email: '', department: '', role: 'faculty' });
-      fetchData();
-    } catch (err) {
-      setError('Failed to create faculty');
-    }
-  };
-
-  const handleUpdateFaculty = async (e) => {
-    e.preventDefault();
-    try {
-      await facultyApi.updateFaculty(editingFaculty._id, editingFaculty);
-      setEditingFaculty(null);
-      fetchData();
-    } catch (err) {
-      setError('Failed to update faculty');
-    }
-  };
-
-  const handleDeleteFaculty = async (facultyId) => {
-    if (window.confirm('Are you sure you want to delete this faculty member?')) {
-      try {
-        await facultyApi.deleteFaculty(facultyId);
-        fetchData();
-      } catch (err) {
-        setError('Failed to delete faculty');
-      }
-    }
-  };
-
 
 
   // Result Management
@@ -539,170 +552,149 @@ function FacultyDashboardPage() {
     }
   }, [notificationTab]);
 
-  // Professional Attendance System Functions
-  const loadStudentsForAttendance = async () => {
+  // Attendance-related functions
+  const loadAssignedClasses = async () => {
     try {
-      setLoading(true);
-      let response;
-      if (attendanceForm.department === 'all') {
-        response = await facultyApi.getAllStudents();
-      } else {
-        response = await facultyApi.getStudentsByDepartment(attendanceForm.department);
-      }
-      setAllStudents(response.data);
-      setFilteredStudents(response.data);
-
-      // Load attendance statistics
-      const statsResponse = await facultyApi.getAttendanceStatistics({
-        date: attendanceForm.date,
-        subject: attendanceForm.subject,
-        department: attendanceForm.department !== 'all' ? attendanceForm.department : undefined
-      });
-      setAttendanceStats(statsResponse.data);
-
-      setError('');
+      const response = await facultyApi.getAssignedClasses();
+      setAssignedClasses(response.data);
     } catch (err) {
-      setError('Failed to load students for attendance');
+      console.log('Failed to load assigned classes:', err);
+      // Fallback to profile subjects if API fails
+      if (profile && profile.subjectsTaught) {
+        setAssignedClasses(Array.isArray(profile.subjectsTaught) ? profile.subjectsTaught : profile.subjectsTaught.split(','));
+      }
     }
-    setLoading(false);
   };
 
-  const filterStudents = (term) => {
-    if (!term) {
-      setFilteredStudents(allStudents);
+  const loadStudentsForClass = async (classId, subjectId) => {
+    if (!classId || !subjectId) {
+      setStudentsForClass([]);
       return;
     }
-
-    const filtered = allStudents.filter(student =>
-      student.username.toLowerCase().includes(term.toLowerCase()) ||
-      student._id.toString().toLowerCase().includes(term.toLowerCase()) ||
-      student.email.toLowerCase().includes(term.toLowerCase())
-    );
-    setFilteredStudents(filtered);
+    try {
+      const response = await facultyApi.getStudentsForClass(classId, subjectId);
+      setStudentsForClass(response.data);
+      // Initialize attendance draft with all students as absent
+      const draft = {};
+      response.data.forEach(student => {
+        draft[student._id] = 'absent';
+      });
+      setAttendanceDraft(draft);
+    } catch (err) {
+      console.log('Failed to load students for class and subject:', err);
+      setStudentsForClass([]);
+    }
   };
 
-  const toggleAttendance = (studentId, status) => {
-    setStudentAttendance(prev => ({
+  const loadAttendanceHistory = async (classId, subjectId) => {
+    if (!classId || !subjectId) {
+      setAttendanceRecords([]);
+      return;
+    }
+    try {
+      const response = await facultyApi.getAttendanceHistory(classId, subjectId);
+      setAttendanceRecords(response.data);
+    } catch (err) {
+      console.log('Failed to load attendance history:', err);
+      setAttendanceRecords([]);
+    }
+  };
+
+  const loadAttendanceForDate = async (date, subject, classId) => {
+    if (!date || !subject || !classId) {
+      setAttendanceRecords([]);
+      return;
+    }
+    try {
+      const response = await facultyApi.getAttendance(classId, subject, { date });
+      setAttendanceRecords(response.data);
+      // Update draft with existing records
+      const draft = { ...attendanceDraft };
+      response.data.forEach(record => {
+        draft[record.studentId] = record.status;
+      });
+      setAttendanceDraft(draft);
+    } catch (err) {
+      console.log('Failed to load attendance for date:', err);
+      setAttendanceRecords([]);
+    }
+  };
+
+  const updateAttendanceDraft = (studentId, status) => {
+    setAttendanceDraft(prev => ({
       ...prev,
-      [studentId]: prev[studentId] === status ? null : status
+      [studentId]: status
     }));
   };
 
-  const markAllPresent = () => {
-    const newAttendance = {};
-    allStudents.forEach(student => {
-      newAttendance[student._id] = 'present';
-    });
-    setStudentAttendance(newAttendance);
-  };
-
-  const markAllAbsent = () => {
-    const newAttendance = {};
-    allStudents.forEach(student => {
-      newAttendance[student._id] = 'absent';
-    });
-    setStudentAttendance(newAttendance);
-  };
-
-  const submitAttendance = async () => {
-    if (!attendanceForm.date || !attendanceForm.subject) {
-      setError('Please fill in date and subject');
-      return;
-    }
-
-    if (Object.keys(studentAttendance).length === 0) {
-      setError('Please mark attendance for at least one student');
-      return;
-    }
-
+  const saveAttendance = async () => {
+    setAttendanceLoading(true);
+    setAttendanceError('');
     try {
-      const attendanceRecords = Object.entries(studentAttendance)
-        .filter(([_, status]) => status)
-        .map(([studentId, status]) => ({
-          studentId,
-          status
-        }));
+      const attendanceData = Object.entries(attendanceDraft).map(([studentId, status]) => ({
+        studentId,
+        subject: selectedSubject,
+        date: selectedDate,
+        classId: selectedClass,
+        status
+      }));
 
-      await facultyApi.markBulkAttendance({
-        date: attendanceForm.date,
-        subject: attendanceForm.subject,
-        attendanceRecords
-      });
-
-      setStudentAttendance({});
-      setError('');
-      alert('Attendance submitted successfully!');
-      fetchData(); // Refresh data
-    } catch (err) {
-      setError('Failed to submit attendance');
-    }
-  };
-
-  const updateRecordStatus = async (recordId, status) => {
-    try {
-      await facultyApi.updateAttendanceRecord(recordId, status);
-      fetchData(); // Refresh attendance records
-    } catch (err) {
-      setError('Failed to update attendance record');
-    }
-  };
-
-  const loadDayWiseAttendance = async () => {
-    // Prevent multiple simultaneous calls
-    if (dayWiseLoading) {
-      console.log('Day-wise attendance already loading, skipping...');
-      return;
-    }
-
-    try {
-      setDayWiseLoading(true);
-      setDayWiseError('');
-      console.log('Loading day-wise attendance records...');
-
-      // Get current date and last 7 days for default range
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 7);
-
-      const params = {
-        startDate: startDate.toISOString().split('T')[0],
-        endDate: endDate.toISOString().split('T')[0]
-      };
-
-      console.log('Calling API with params:', params);
-      const response = await facultyApi.getDayWiseAttendanceRecords(params);
-      console.log('Day-wise attendance response:', response.data);
-
-      // Handle empty response gracefully
-      if (!response.data || response.data.length === 0) {
-        console.log('No attendance records found for the specified date range');
-        setDayWiseAttendance([]);
+      if (isEditMode) {
+        await facultyApi.bulkEditAttendance(selectedClass, selectedSubject, attendanceData);
       } else {
-        setDayWiseAttendance(response.data);
+        await facultyApi.markAttendance(attendanceData);
       }
 
-      setShowDayWiseView(true);
-      setError('');
+      alert('Attendance saved successfully!');
+      // Reload attendance records
+      await loadAttendanceForDate(selectedDate, selectedSubject, selectedClass);
+      setIsEditMode(false);
     } catch (err) {
-      console.error('Error loading day-wise attendance:', err);
-      setDayWiseError('Failed to load day-wise attendance records. Please try again.');
-      setDayWiseAttendance([]);
-    } finally {
-      setDayWiseLoading(false);
+      setAttendanceError('Failed to save attendance');
+      console.log('Save attendance error:', err);
+    }
+    setAttendanceLoading(false);
+  };
+
+  const toggleEditMode = () => {
+    setIsEditMode(!isEditMode);
+    if (!isEditMode) {
+      // Entering edit mode - load existing records
+      loadAttendanceForDate(selectedDate, selectedSubject, selectedClass);
+    } else {
+      // Exiting edit mode - reset draft
+      loadStudentsForClass(selectedClass, selectedSubject);
     }
   };
 
-  const toggleDayWiseView = () => {
-    if (!showDayWiseView) {
-      // Only load if not already loading
-      if (!dayWiseLoading) {
-        loadDayWiseAttendance();
-      }
-    } else {
-      setShowDayWiseView(false);
-      setDayWiseError(''); // Clear any previous errors when switching views
-    }
+  const calculateSummary = () => {
+    const total = studentsForClass.length;
+    const present = Object.values(attendanceDraft).filter(status => status === 'present').length;
+    const absent = total - present;
+    const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
+    return { total, present, absent, percentage };
   };
+
+  // Load attendance data when section changes or dependencies change
+  useEffect(() => {
+    if (activeSection === 'attendance') {
+      loadAssignedClasses();
+    }
+  }, [activeSection, profile]);
+
+  useEffect(() => {
+    if (activeSection === 'attendance' && selectedClass && selectedSubject) {
+      loadStudentsForClass(selectedClass, selectedSubject);
+    }
+  }, [selectedClass, selectedSubject, activeSection]);
+
+  useEffect(() => {
+    if (activeSection === 'attendance' && selectedDate && selectedSubject && selectedClass) {
+      if (isEditMode || new Date(selectedDate) < new Date()) {
+        loadAttendanceForDate(selectedDate, selectedSubject, selectedClass);
+      }
+    }
+  }, [selectedDate, selectedSubject, selectedClass, isEditMode, activeSection]);
 
   const renderSection = () => {
     switch (activeSection) {
@@ -745,34 +737,6 @@ function FacultyDashboardPage() {
 
             {/* Charts Section */}
             <div className="dashboard-charts">
-              <div className="chart-container">
-                <h3>Attendance Trends (Last 30 Days)</h3>
-                {trendsData && trendsData.length > 0 ? (
-                  <Line
-                    data={{
-                      labels: trendsData.map(item => item.date),
-                      datasets: [{
-                        label: 'Attendance Percentage',
-                        data: trendsData.map(item => item.percentage),
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                      }]
-                    }}
-                    options={{
-                      responsive: true,
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          max: 100
-                        }
-                      }
-                    }}
-                  />
-                ) : (
-                  <p>No attendance data available</p>
-                )}
-              </div>
-
               <div className="chart-container">
                 <h3>Subject-wise Performance</h3>
                 {performanceData && performanceData.length > 0 ? (
@@ -829,17 +793,17 @@ function FacultyDashboardPage() {
               <h3>Classes Assigned</h3>
               {profile && profile.subjectsTaught ? (
                 <div className="subjects-list">
-                  {Array.isArray(profile.subjectsTaught) 
+                  {Array.isArray(profile.subjectsTaught)
                     ? profile.subjectsTaught.map((subject, index) => (
-                        <div key={index} className="subject-item">
-                          {subject.trim()}
-                        </div>
-                      ))
+                      <div key={index} className="subject-item">
+                        {subject.trim()}
+                      </div>
+                    ))
                     : profile.subjectsTaught.split(',').map((subject, index) => (
-                        <div key={index} className="subject-item">
-                          {subject.trim()}
-                        </div>
-                      ))
+                      <div key={index} className="subject-item">
+                        {subject.trim()}
+                      </div>
+                    ))
                   }
                 </div>
               ) : (
@@ -847,283 +811,598 @@ function FacultyDashboardPage() {
               )}
             </div>
 
-            {/* Today's Attendance Summary */}
-            <div className="dashboard-section">
-              <h3>Today's Attendance Summary</h3>
-              <div className="attendance-stats-grid">
-                <div className="stat-card present">
-                  <h3>{todayAttendance.filter(a => a.status === 'present').length}</h3>
-                  <p>Present Today</p>
-                  <span className="percentage">
-                    {todayAttendance.length > 0 ?
-                      Math.round((todayAttendance.filter(a => a.status === 'present').length / todayAttendance.length) * 100) : 0}%
-                  </span>
-                </div>
-                <div className="stat-card absent">
-                  <h3>{todayAttendance.filter(a => a.status === 'absent').length}</h3>
-                  <p>Absent Today</p>
-                  <span className="percentage">
-                    {todayAttendance.length > 0 ?
-                      Math.round((todayAttendance.filter(a => a.status === 'absent').length / todayAttendance.length) * 100) : 0}%
-                  </span>
-                </div>
-                <div className="stat-card total">
-                  <h3>{todayAttendance.length}</h3>
-                  <p>Total Students</p>
-                </div>
-                <div className="stat-card late">
-                  <h3>{todayAttendance.filter(a => a.status === 'late').length}</h3>
-                  <p>Late Today</p>
-                  <span className="percentage">
-                    {todayAttendance.length > 0 ?
-                      Math.round((todayAttendance.filter(a => a.status === 'late').length / todayAttendance.length) * 100) : 0}%
-                  </span>
-                </div>
-              </div>
-            </div>
+
           </div>
         );
       case 'profile':
         return (
-          <div className="section-content profile-section">
-            <h2>Faculty Profile</h2>
+          <div className="section-content">
+            <div className="faculty-details-header">
+              <h2>Faculty Profile</h2>
+            </div>
             {profile ? (
-              <div className="profile-card enhanced-profile-card">
-                {!isEditingProfile ? (
-                  <>
-                    <div className="profile-header">
-                      <div className="profile-picture-section">
-                        {profile.profilePicture ? (
-                          <img src={`${BACKEND_BASE_URL}/uploads/profile-pictures/${profile.profilePicture}`} alt="Profile" className="profile-picture" />
+              <div className="faculty-details-container">
+                <div className="faculty-details-grid">
+                  <div className={`detail-card ${isEditingProfile ? 'editing' : ''}`}>
+                    <h3>Personal Information</h3>
+                    <div style={{ textAlign: 'left', marginBottom: '10px' }}>
+                      {isEditingProfile ? (
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileChange('profilePicture', e.target.files[0])}
+                        />
+                      ) : (
+                        profile.profilePicture ? (
+                          <img src={`${BACKEND_BASE_URL}/uploads/profile-pictures/${profile.profilePicture}`} alt="Profile" style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
                         ) : (
-                          <div className="profile-picture-placeholder">
-                            {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : profile.username.charAt(0).toUpperCase()}
-                          </div>
+                          <span>No profile picture uploaded</span>
+                        )
+                      )}
+                    </div>
+                    {(isEditingProfile || profile.fullName) && (
+                      <div className="detail-row">
+                        <label>Full Name:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="text"
+                            value={profileForm.fullName}
+                            onChange={(e) => handleProfileFormChange('fullName', e.target.value)}
+                          />
+                        ) : (
+                          <span>{profile.fullName}</span>
                         )}
                       </div>
-                      <div className="profile-basic-info">
-                        <h3>{profile.fullName || profile.username}</h3>
-                        <p className="designation">{profile.designation || 'Faculty'}</p>
-                        <p className="department">{profile.department}</p>
+                    )}
+                    {(isEditingProfile || profile.officialEmail || profile.email) && (
+                      <div className="detail-row">
+                        <label>Email:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="email"
+                            value={profileForm.officialEmail}
+                            onChange={(e) => handleProfileFormChange('officialEmail', e.target.value)}
+                          />
+                        ) : (
+                          <span>{profile.officialEmail || profile.email}</span>
+                        )}
                       </div>
-                      <button className="btn-edit-profile" onClick={() => setIsEditingProfile(true)}>
-                        Edit Profile
-                      </button>
-                    </div>
-
-                    <div className="profile-details-grid">
-                      <div className="profile-section">
-                        <h4>Basic Information</h4>
-                        <div className="detail-row">
-                          <span className="label">Full Name:</span>
-                          <span className="value">{profile.fullName || 'Not provided'}</span>
-                        </div>
-                        <div className="detail-row">
-                          <span className="label">Employee ID:</span>
-                          <span className="value">{profile.employeeId || 'Not provided'}</span>
-                        </div>
-                        <div className="detail-row">
-                          <span className="label">Designation:</span>
-                          <span className="value">{profile.designation || 'Not provided'}</span>
-                        </div>
-                        <div className="detail-row">
-                          <span className="label">Date of Joining:</span>
-                          <span className="value">{profile.dateOfJoining ? new Date(profile.dateOfJoining).toLocaleDateString() : 'Not provided'}</span>
-                        </div>
+                    )}
+                    {(isEditingProfile || profile.mobileNumber) && (
+                      <div className="detail-row">
+                        <label>Mobile Number:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="tel"
+                            value={profileForm.mobileNumber}
+                            onChange={(e) => handleProfileFormChange('mobileNumber', e.target.value)}
+                          />
+                        ) : (
+                          <span>{profile.mobileNumber}</span>
+                        )}
                       </div>
-
-                      <div className="profile-section">
-                        <h4>Contact Details</h4>
-                        <div className="detail-row">
-                          <span className="label">Official Email:</span>
-                          <span className="value">{profile.officialEmail || 'Not provided'}</span>
-                        </div>
-                        <div className="detail-row">
-                          <span className="label">Mobile Number:</span>
-                          <span className="value">{profile.mobileNumber || 'Not provided'}</span>
-                        </div>
+                    )}
+                    {(isEditingProfile || profile.dateOfJoining) && (
+                      <div className="detail-row">
+                        <label>Date of Joining:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="date"
+                            value={profileForm.dateOfJoining}
+                            onChange={(e) => handleProfileFormChange('dateOfJoining', e.target.value)}
+                          />
+                        ) : (
+                          <span>{new Date(profile.dateOfJoining).toLocaleDateString()}</span>
+                        )}
                       </div>
-
-                      <div className="profile-section">
-                        <h4>Documents</h4>
-                        <div className="detail-row">
-                          <span className="label">ID Proof:</span>
-                          <span className="value">
-                            {profile.idProof ? (
-                              <a href={`${BACKEND_BASE_URL}/${profile.idProof}`} target="_blank" rel="noopener noreferrer">
-                                View ID Proof
-                              </a>
-                            ) : 'Not uploaded'}
-                          </span>
-                        </div>
-                        <div className="detail-row">
-                          <span className="label">Qualification Certificates:</span>
-                          <span className="value">
-                            {profile.qualificationCertificates && profile.qualificationCertificates.length > 0 ? (
-                              profile.qualificationCertificates.map((cert, index) => (
-                                <div key={index}>
-                                  <a href={`${BACKEND_BASE_URL}/${cert}`} target="_blank" rel="noopener noreferrer">
-                                    Certificate {index + 1}
-                                  </a>
-                                </div>
-                              ))
-                            ) : 'Not uploaded'}
-                          </span>
-                        </div>
-                        <div className="detail-row">
-                          <span className="label">Appointment Letter:</span>
-                          <span className="value">
-                            {profile.appointmentLetter ? (
-                              <a href={`${BACKEND_BASE_URL}/${profile.appointmentLetter}`} target="_blank" rel="noopener noreferrer">
-                                View Appointment Letter
-                              </a>
-                            ) : 'Not uploaded'}
-                          </span>
-                        </div>
+                    )}
+                    {(isEditingProfile || profile.address) && (
+                      <div className="detail-row">
+                        <label>Address: </label>
+                        {isEditingProfile ? (
+                          <textarea
+                            value={profileForm.address}
+                            onChange={(e) => handleProfileFormChange('address', e.target.value)}
+                            rows="3"
+                          />
+                        ) : (
+                          <span>{profile.address}</span>
+                        )}
                       </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="profile-edit-form">
-                    <h3>Edit Profile</h3>
-                    <form onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }}>
-                      <div className="form-grid">
-                        <div className="form-section">
-                          <h4>Basic Information</h4>
-                          <div className="form-group">
-                            <label>Full Name:</label>
-                            <input
-                              type="text"
-                              value={profileForm.fullName}
-                              onChange={(e) => handleProfileFormChange('fullName', e.target.value)}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Employee ID:</label>
-                            <input
-                              type="text"
-                              value={profileForm.employeeId}
-                              onChange={(e) => handleProfileFormChange('employeeId', e.target.value)}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Department:</label>
-                            <select
-                              value={profileForm.department}
-                              onChange={(e) => handleProfileFormChange('department', e.target.value)}
-                            >
-                              <option value="">Select Department</option>
-                              <option value="Computer Science">Computer Science</option>
-                              <option value="Information Technology">Information Technology</option>
-                              <option value="Electronics">Electronics</option>
-                              <option value="Mechanical">Mechanical</option>
-                              <option value="Civil">Civil</option>
-                              <option value="Mathematics">Mathematics</option>
-                              <option value="Physics">Physics</option>
-                              <option value="Chemistry">Chemistry</option>
-                              <option value="Biology">Biology</option>
-                              <option value="History">History</option>
-                              <option value="English">English</option>
-                            </select>
-                          </div>
-                          <div className="form-group">
-                            <label>Designation:</label>
-                            <input
-                              type="text"
-                              value={profileForm.designation}
-                              onChange={(e) => handleProfileFormChange('designation', e.target.value)}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Date of Joining:</label>
-                            <input
-                              type="date"
-                              value={profileForm.dateOfJoining}
-                              onChange={(e) => handleProfileFormChange('dateOfJoining', e.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="form-section">
-                          <h4>Contact Details</h4>
-                          <div className="form-group">
-                            <label>Official Email:</label>
-                            <input
-                              type="email"
-                              value={profileForm.officialEmail}
-                              onChange={(e) => handleProfileFormChange('officialEmail', e.target.value)}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Mobile Number:</label>
-                            <input
-                              type="tel"
-                              value={profileForm.mobileNumber}
-                              onChange={(e) => handleProfileFormChange('mobileNumber', e.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="form-section full-width">
-                          <h4>Profile Picture & Documents</h4>
-                          <div className="file-upload-section">
-                            <div className="form-group">
-                              <label>Profile Picture:</label>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleFileChange('profilePicture', e.target.files[0])}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label>ID Proof:</label>
-                              <input
-                                type="file"
-                                accept=".pdf,.jpg,.jpeg,.png"
-                                onChange={(e) => handleFileChange('idProof', e.target.files[0])}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label>Qualification Certificates (up to 5 files):</label>
-                              <input
-                                type="file"
-                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                                multiple
-                                onChange={(e) => {
-                                  const files = Array.from(e.target.files);
-                                  setDocumentFiles(prev => ({
-                                    ...prev,
-                                    qualificationCertificates: files
-                                  }));
-                                }}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label>Appointment Letter:</label>
-                              <input
-                                type="file"
-                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                                onChange={(e) => handleFileChange('appointmentLetter', e.target.files[0])}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="form-actions">
-                        <button type="submit" className="btn-save" disabled={profileLoading}>
-                          {profileLoading ? 'Saving...' : 'Save Profile'}
-                        </button>
-                        <button type="button" className="btn-cancel" onClick={handleCancelEdit}>
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
+                    )}
                   </div>
-                )}
+
+                  <div className={`detail-card ${isEditingProfile ? 'editing' : ''}`}>
+                    <h3>Professional Information</h3>
+                    {(isEditingProfile || profile.department) && (
+                      <div className="detail-row">
+                        <label>Department:</label>
+                        {isEditingProfile ? (
+                          <select
+                            value={profileForm.department}
+                            onChange={(e) => handleProfileFormChange('department', e.target.value)}
+                          >
+                            <option value="">Select Department</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Civil">Civil</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                            <option value="Biology">Biology</option>
+                            <option value="History">History</option>
+                            <option value="English">English</option>
+                          </select>
+                        ) : (
+                          <span>{profile.department}</span>
+                        )}
+                      </div>
+                    )}
+                    {(isEditingProfile || profile.designation) && (
+                      <div className="detail-row">
+                        <label>Designation:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="text"
+                            value={profileForm.designation}
+                            onChange={(e) => handleProfileFormChange('designation', e.target.value)}
+                          />
+                        ) : (
+                          <span>{profile.designation}</span>
+                        )}
+                      </div>
+                    )}
+                    {(isEditingProfile || (profile.subjectsTaught && profile.subjectsTaught.length > 0)) && (
+                      <div className="detail-row">
+                        <label>Subjects Taught:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="text"
+                            value={profileForm.subjectsTaught.join(', ')}
+                            onChange={(e) => handleArrayFieldChange('subjectsTaught', e.target.value)}
+                            placeholder="Comma-separated subjects"
+                          />
+                        ) : (
+                          <span>{Array.isArray(profile.subjectsTaught) ? profile.subjectsTaught.join(', ') : profile.subjectsTaught}</span>
+                        )}
+                      </div>
+                    )}
+                    {(isEditingProfile || profile.teachingExperience) && (
+                      <div className="detail-row">
+                        <label>Teaching Experience:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="number"
+                            value={profileForm.teachingExperience}
+                            onChange={(e) => handleProfileFormChange('teachingExperience', e.target.value)}
+                            placeholder="Years"
+                          />
+                        ) : (
+                          <span>{`${profile.teachingExperience} years`}</span>
+                        )}
+                      </div>
+                    )}
+                    <div className="detail-row">
+                      <label>Status:</label>
+                      {isEditingProfile ? (
+                        <select
+                          value={profileForm.status}
+                          onChange={(e) => handleProfileFormChange('status', e.target.value)}
+                        >
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
+                          <option value="on-leave">On Leave</option>
+                        </select>
+                      ) : (
+                        <span>{profile.status || 'active'}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={`detail-card ${isEditingProfile ? 'editing' : ''}`}>
+                    <h3>Documents & Certifications</h3>
+                    {(isEditingProfile || profile.idProof) && (
+                      <div className="detail-row">
+                        <label>ID Proof:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={(e) => handleFileChange('idProof', e.target.files[0])}
+                          />
+                        ) : (
+                          <span>
+                            <a href={`${BACKEND_BASE_URL}/${profile.idProof}`} target="_blank" rel="noopener noreferrer">
+                              View ID Proof
+                            </a>
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {(isEditingProfile || (profile.qualificationCertificates && profile.qualificationCertificates.length > 0)) && (
+                      <div className="detail-row">
+                        <label>Qualification Certificates:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                            multiple
+                            onChange={(e) => {
+                              const files = Array.from(e.target.files);
+                              setDocumentFiles(prev => ({
+                                ...prev,
+                                qualificationCertificates: files
+                              }));
+                            }}
+                          />
+                        ) : (
+                          <span>
+                            {profile.qualificationCertificates.map((cert, index) => (
+                              <div key={index}>
+                                <a href={`${BACKEND_BASE_URL}/${cert}`} target="_blank" rel="noopener noreferrer">
+                                  Certificate {index + 1}
+                                </a>
+                              </div>
+                            ))}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {(isEditingProfile || profile.appointmentLetter) && (
+                      <div className="detail-row">
+                        <label>Appointment Letter:</label>
+                        {isEditingProfile ? (
+                          <input
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                            onChange={(e) => handleFileChange('appointmentLetter', e.target.files[0])}
+                          />
+                        ) : (
+                          <span>
+                            <a href={`${BACKEND_BASE_URL}/${profile.appointmentLetter}`} target="_blank" rel="noopener noreferrer">
+                              View Appointment Letter
+                            </a>
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="faculty-actions">
+                  {isEditingProfile ? (
+                    <>
+                      <button className="btn-primary" onClick={handleSaveProfile} disabled={profileLoading}>
+                        {profileLoading ? 'Saving...' : 'Save Changes'}
+                      </button>
+                      <button className="btn-danger" onClick={handleCancelEdit}>
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <button className="btn-secondary" onClick={() => setIsEditingProfile(true)}>
+                      Edit Profile
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : isCreatingProfile ? (
+              <div className="faculty-details-container">
+                <div className="faculty-details-grid">
+                  <div className="detail-card editing">
+                    <h3>Personal Information</h3>
+                    <div className="detail-row">
+                      <label>Full Name:</label>
+                      <input
+                        type="text"
+                        value={profileForm.fullName}
+                        onChange={(e) => handleProfileFormChange('fullName', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="detail-row">
+                      <label>Email:</label>
+                      <input
+                        type="email"
+                        value={profileForm.officialEmail}
+                        onChange={(e) => handleProfileFormChange('officialEmail', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="detail-row">
+                      <label>Mobile Number:</label>
+                      <input
+                        type="tel"
+                        value={profileForm.mobileNumber}
+                        onChange={(e) => handleProfileFormChange('mobileNumber', e.target.value)}
+                      />
+                    </div>
+                    <div className="detail-row">
+                      <label>Date of Joining:</label>
+                      <input
+                        type="date"
+                        value={profileForm.dateOfJoining}
+                        onChange={(e) => handleProfileFormChange('dateOfJoining', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="detail-row">
+                      <label>Address:</label>
+                      <input
+                        type="text"
+                        value={profileForm.address}
+                        onChange={(e) => handleProfileFormChange('address', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="detail-card editing">
+                    <h3>Professional Information</h3>
+                    <div className="detail-row">
+                      <label>Department:</label>
+                      <select
+                        value={profileForm.department}
+                        onChange={(e) => handleProfileFormChange('department', e.target.value)}
+                        required
+                      >
+                        <option value="">Select Department</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Biology">Biology</option>
+                        <option value="History">History</option>
+                        <option value="English">English</option>
+                      </select>
+                    </div>
+                    <div className="detail-row">
+                      <label>Designation:</label>
+                      <input
+                        type="text"
+                        value={profileForm.designation}
+                        onChange={(e) => handleProfileFormChange('designation', e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="detail-row">
+                      <label>Subjects Taught:</label>
+                      <input
+                        type="text"
+                        value={profileForm.subjectsTaught.join(', ')}
+                        onChange={(e) => handleArrayFieldChange('subjectsTaught', e.target.value)}
+                        placeholder="Comma-separated subjects"
+                        required
+                      />
+                    </div>
+                    <div className="detail-row">
+                      <label>Teaching Experience:</label>
+                      <input
+                        type="number"
+                        value={profileForm.teachingExperience}
+                        onChange={(e) => handleProfileFormChange('teachingExperience', e.target.value)}
+                        placeholder="Years"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="detail-card editing">
+                    <h3>Documents & Certifications</h3>
+                    <div className="detail-row">
+                      <label>ID Proof:</label>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => handleFileChange('idProof', e.target.files[0])}
+                      />
+                    </div>
+                    <div className="detail-row">
+                      <label>Qualification Certificates:</label>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                        multiple
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files);
+                          setDocumentFiles(prev => ({
+                            ...prev,
+                            qualificationCertificates: files
+                          }));
+                        }}
+                      />
+                    </div>
+                    <div className="detail-row">
+                      <label>Appointment Letter:</label>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                        onChange={(e) => handleFileChange('appointmentLetter', e.target.files[0])}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="faculty-actions">
+                  <button className="btn-primary" onClick={handleCreateProfile} disabled={profileLoading}>
+                    {profileLoading ? 'Creating...' : 'Create Profile'}
+                  </button>
+                  <button className="btn-danger" onClick={() => setIsCreatingProfile(false)}>
+                    Cancel
+                  </button>
+                </div>
               </div>
             ) : (
               <p>Loading profile...</p>
+            )}
+          </div>
+        );
+      case 'attendance':
+        return (
+          <div className="section-content">
+            <h2>Mark Attendance</h2>
+            {attendanceError && <p className="error">{attendanceError}</p>}
+
+            {/* Controls */}
+            <div className="attendance-controls">
+              <div className="control-group">
+                <label>Select Subject:</label>
+                <select
+                  value={selectedSubject}
+                  onChange={(e) => setSelectedSubject(e.target.value)}
+                >
+                  <option value="">Select Subject</option>
+                  {PREDEFINED_SUBJECTS.map((subject, index) => (
+                    <option key={index} value={subject}>{subject}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="control-group">
+                <label>Select Course:</label>
+                <select
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">Select Course</option>
+                  <option value="ba">BA</option>
+                  <option value="bsc">BSc</option>
+                  <option value="bcom">BCom</option>
+                  <option value="ma">MA</option>
+                  <option value="msc">MSc</option>
+                  <option value="mcom">MCom</option>
+                </select>
+              </div>
+
+              <div className="control-group">
+                <label>Select Date:</label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+              </div>
+
+              {new Date(selectedDate) < new Date() && (
+                <div className="control-group">
+                  <button
+                    className={`btn-edit-mode ${isEditMode ? 'active' : ''}`}
+                    onClick={toggleEditMode}
+                  >
+                    {isEditMode ? 'Exit Edit Mode' : 'Edit Past Attendance'}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Summary Card */}
+            {studentsForClass.length > 0 && (
+              <div className="attendance-summary">
+                <h3>Attendance Summary</h3>
+                <div className="summary-stats">
+                  <div className="stat-item">
+                    <span className="stat-label">Total Students:</span>
+                    <span className="stat-value">{calculateSummary().total}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Present:</span>
+                    <span className="stat-value present">{calculateSummary().present}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Absent:</span>
+                    <span className="stat-value absent">{calculateSummary().absent}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Percentage:</span>
+                    <span className="stat-value">{calculateSummary().percentage}%</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Attendance Table */}
+            {studentsForClass.length > 0 ? (
+              <div className="attendance-table-container">
+                <table className="attendance-table">
+                  <thead>
+                    <tr>
+                      <th>Student ID</th>
+                      <th>Name</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {studentsForClass.map(student => (
+                      <tr key={student._id}>
+                        <td>{student.username}</td>
+                        <td>{student.fullName || 'N/A'}</td>
+                        <td>
+                          <div className="attendance-status-controls">
+                            <label>
+                              <input
+                                type="radio"
+                                name={`attendance-${student._id}`}
+                                value="present"
+                                checked={attendanceDraft[student._id] === 'present'}
+                                onChange={() => updateAttendanceDraft(student._id, 'present')}
+                              />
+                              Present
+                            </label>
+                            <label>
+                              <input
+                                type="radio"
+                                name={`attendance-${student._id}`}
+                                value="absent"
+                                checked={attendanceDraft[student._id] === 'absent'}
+                                onChange={() => updateAttendanceDraft(student._id, 'absent')}
+                              />
+                              Absent
+                            </label>
+                            <label>
+                              <input
+                                type="radio"
+                                name={`attendance-${student._id}`}
+                                value="late"
+                                checked={attendanceDraft[student._id] === 'late'}
+                                onChange={() => updateAttendanceDraft(student._id, 'late')}
+                              />
+                              Late
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : selectedClass && selectedSubject ? (
+              <p>No students found for the selected class and subject.</p>
+            ) : (
+              <p>Please select a class and subject to view students.</p>
+            )}
+
+            {/* Action Buttons */}
+            {studentsForClass.length > 0 && (
+              <div className="attendance-actions">
+                <button
+                  className="btn-save-attendance"
+                  onClick={saveAttendance}
+                  disabled={attendanceLoading}
+                >
+                  {attendanceLoading ? 'Saving...' : 'Save Attendance'}
+                </button>
+                <button
+                  className="btn-cancel"
+                  onClick={() => {
+                    // Reset draft to initial state
+                    loadStudentsForClass(selectedClass, selectedSubject);
+                  }}
+                >
+                  Reset
+                </button>
+              </div>
             )}
           </div>
         );
@@ -1151,28 +1430,31 @@ function FacultyDashboardPage() {
                 placeholder="Student ID"
                 value={editingResult ? editingResult.studentId : newResult.studentId}
                 onChange={(e) => editingResult ?
-                  setEditingResult({...editingResult, studentId: e.target.value}) :
-                  setNewResult({...newResult, studentId: e.target.value})
+                  setEditingResult({ ...editingResult, studentId: e.target.value }) :
+                  setNewResult({ ...newResult, studentId: e.target.value })
                 }
                 required
               />
-              <input
-                type="text"
-                placeholder="Subject"
+              <select
                 value={editingResult ? editingResult.subject : newResult.subject}
                 onChange={(e) => editingResult ?
-                  setEditingResult({...editingResult, subject: e.target.value}) :
-                  setNewResult({...newResult, subject: e.target.value})
+                  setEditingResult({ ...editingResult, subject: e.target.value }) :
+                  setNewResult({ ...newResult, subject: e.target.value })
                 }
                 required
-              />
+              >
+                <option value="">Select Subject</option>
+                {PREDEFINED_SUBJECTS.map((subject, index) => (
+                  <option key={index} value={subject}>{subject}</option>
+                ))}
+              </select>
               <input
                 type="number"
                 placeholder="Marks"
                 value={editingResult ? editingResult.marks : newResult.marks}
                 onChange={(e) => editingResult ?
-                  setEditingResult({...editingResult, marks: e.target.value}) :
-                  setNewResult({...newResult, marks: e.target.value})
+                  setEditingResult({ ...editingResult, marks: e.target.value }) :
+                  setNewResult({ ...newResult, marks: e.target.value })
                 }
                 required
               />
@@ -1181,8 +1463,8 @@ function FacultyDashboardPage() {
                 placeholder="Grade"
                 value={editingResult ? editingResult.grade : newResult.grade}
                 onChange={(e) => editingResult ?
-                  setEditingResult({...editingResult, grade: e.target.value}) :
-                  setNewResult({...newResult, grade: e.target.value})
+                  setEditingResult({ ...editingResult, grade: e.target.value }) :
+                  setNewResult({ ...newResult, grade: e.target.value })
                 }
               />
               <div className="form-actions">
@@ -1231,18 +1513,18 @@ function FacultyDashboardPage() {
                 type="text"
                 placeholder="Title"
                 value={newNotice.title}
-                onChange={(e) => setNewNotice({...newNotice, title: e.target.value})}
+                onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })}
                 required
               />
               <textarea
                 placeholder="Content"
                 value={newNotice.content}
-                onChange={(e) => setNewNotice({...newNotice, content: e.target.value})}
+                onChange={(e) => setNewNotice({ ...newNotice, content: e.target.value })}
                 required
               />
               <select
                 value={newNotice.priority}
-                onChange={(e) => setNewNotice({...newNotice, priority: e.target.value})}
+                onChange={(e) => setNewNotice({ ...newNotice, priority: e.target.value })}
               >
                 <option value="normal">Normal</option>
                 <option value="high">High</option>
@@ -1288,17 +1570,12 @@ function FacultyDashboardPage() {
                 <option value="fees">Fee Report</option>
                 <option value="results">Result Report</option>
               </select>
-              {reportType === 'attendance' && profile && profile.subjectsTaught && (
+              {reportType === 'attendance' && (
                 <select value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)}>
                   <option value="">All Subjects</option>
-                  {Array.isArray(profile.subjectsTaught) 
-                    ? profile.subjectsTaught.map((subject, index) => (
-                        <option key={index} value={subject.trim()}>{subject.trim()}</option>
-                      ))
-                    : profile.subjectsTaught.split(',').map((subject, index) => (
-                        <option key={index} value={subject.trim()}>{subject.trim()}</option>
-                      ))
-                  }
+                  {PREDEFINED_SUBJECTS.map((subject, index) => (
+                    <option key={index} value={subject}>{subject}</option>
+                  ))}
                 </select>
               )}
               <button onClick={generateReport}>Generate Report</button>
@@ -1312,8 +1589,8 @@ function FacultyDashboardPage() {
                 placeholder="Student ID"
                 value={editingFee ? editingFee.studentId : newFee.studentId}
                 onChange={(e) => editingFee ?
-                  setEditingFee({...editingFee, studentId: e.target.value}) :
-                  setNewFee({...newFee, studentId: e.target.value})
+                  setEditingFee({ ...editingFee, studentId: e.target.value }) :
+                  setNewFee({ ...newFee, studentId: e.target.value })
                 }
                 required
               />
@@ -1322,8 +1599,8 @@ function FacultyDashboardPage() {
                 placeholder="Amount"
                 value={editingFee ? editingFee.amount : newFee.amount}
                 onChange={(e) => editingFee ?
-                  setEditingFee({...editingFee, amount: e.target.value}) :
-                  setNewFee({...newFee, amount: e.target.value})
+                  setEditingFee({ ...editingFee, amount: e.target.value }) :
+                  setNewFee({ ...newFee, amount: e.target.value })
                 }
                 required
               />
@@ -1332,8 +1609,8 @@ function FacultyDashboardPage() {
                 placeholder="Description"
                 value={editingFee ? editingFee.description : newFee.description}
                 onChange={(e) => editingFee ?
-                  setEditingFee({...editingFee, description: e.target.value}) :
-                  setNewFee({...newFee, description: e.target.value})
+                  setEditingFee({ ...editingFee, description: e.target.value }) :
+                  setNewFee({ ...newFee, description: e.target.value })
                 }
                 required
               />
@@ -1341,8 +1618,8 @@ function FacultyDashboardPage() {
                 type="date"
                 value={editingFee ? editingFee.dueDate : newFee.dueDate}
                 onChange={(e) => editingFee ?
-                  setEditingFee({...editingFee, dueDate: e.target.value}) :
-                  setNewFee({...newFee, dueDate: e.target.value})
+                  setEditingFee({ ...editingFee, dueDate: e.target.value }) :
+                  setNewFee({ ...newFee, dueDate: e.target.value })
                 }
                 required
               />
@@ -1424,12 +1701,12 @@ function FacultyDashboardPage() {
             {/* Create Event */}
             <form onSubmit={handleCreateEvent} className="event-form">
               <h3>Propose New Event</h3>
-              <input type="text" placeholder="Title" value={newEvent.title} onChange={(e) => setNewEvent({...newEvent, title: e.target.value})} required />
-              <textarea placeholder="Description" value={newEvent.description} onChange={(e) => setNewEvent({...newEvent, description: e.target.value})} required />
-              <input type="date" value={newEvent.date} onChange={(e) => setNewEvent({...newEvent, date: e.target.value})} required />
-              <input type="time" value={newEvent.time} onChange={(e) => setNewEvent({...newEvent, time: e.target.value})} required />
-              <input type="text" placeholder="Venue" value={newEvent.venue} onChange={(e) => setNewEvent({...newEvent, venue: e.target.value})} required />
-              <input type="text" placeholder="Organizer" value={newEvent.organizer} onChange={(e) => setNewEvent({...newEvent, organizer: e.target.value})} required />
+              <input type="text" placeholder="Title" value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} required />
+              <textarea placeholder="Description" value={newEvent.description} onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })} required />
+              <input type="date" value={newEvent.date} onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })} required />
+              <input type="time" value={newEvent.time} onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })} required />
+              <input type="text" placeholder="Venue" value={newEvent.venue} onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })} required />
+              <input type="text" placeholder="Organizer" value={newEvent.organizer} onChange={(e) => setNewEvent({ ...newEvent, organizer: e.target.value })} required />
               <button type="submit">Propose Event</button>
             </form>
 
@@ -1559,334 +1836,7 @@ function FacultyDashboardPage() {
             )}
           </div>
         );
-      case 'attendance':
-        return (
-          <div className="section-content">
-            <h2>Professional Attendance Management</h2>
 
-            {/* Today's Attendance Summary */}
-            <div className="attendance-stats-grid">
-              <div className="stat-card present">
-                <h3>{todayAttendance.filter(a => a.status === 'present').length}</h3>
-                <p>Present Today</p>
-                <span className="percentage">
-                  {todayAttendance.length > 0 ?
-                    Math.round((todayAttendance.filter(a => a.status === 'present').length / todayAttendance.length) * 100) : 0}%
-                </span>
-              </div>
-              <div className="stat-card absent">
-                <h3>{todayAttendance.filter(a => a.status === 'absent').length}</h3>
-                <p>Absent Today</p>
-                <span className="percentage">
-                  {todayAttendance.length > 0 ?
-                    Math.round((todayAttendance.filter(a => a.status === 'absent').length / todayAttendance.length) * 100) : 0}%
-                </span>
-              </div>
-              <div className="stat-card total">
-                <h3>{todayAttendance.length}</h3>
-                <p>Total Students</p>
-              </div>
-              <div className="stat-card late">
-                <h3>{todayAttendance.filter(a => a.status === 'late').length}</h3>
-                <p>Late Today</p>
-                <span className="percentage">
-                  {todayAttendance.length > 0 ?
-                    Math.round((todayAttendance.filter(a => a.status === 'late').length / todayAttendance.length) * 100) : 0}%
-                </span>
-              </div>
-            </div>
-
-            {/* Attendance Form */}
-            <div className="attendance-form-container">
-              <form className="attendance-form" onSubmit={(e) => e.preventDefault()}>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Date:</label>
-                    <input
-                      type="date"
-                      value={attendanceForm.date}
-                      onChange={(e) => setAttendanceForm({...attendanceForm, date: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Subject:</label>
-                    <input
-                      type="text"
-                      placeholder="Enter subject name"
-                      value={attendanceForm.subject}
-                      onChange={(e) => setAttendanceForm({...attendanceForm, subject: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Department:</label>
-                    <select
-                      value={attendanceForm.department}
-                      onChange={(e) => setAttendanceForm({...attendanceForm, department: e.target.value})}
-                    >
-                      <option value="all">All Departments</option>
-                      <option value="Computer Science">Computer Science</option>
-                      <option value="Information Technology">Information Technology</option>
-                      <option value="Electronics">Electronics</option>
-                      <option value="Mechanical">Mechanical</option>
-                      <option value="Civil">Civil</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-actions">
-                  <button
-                    type="button"
-                    className="btn-primary"
-                    onClick={loadStudentsForAttendance}
-                  >
-                    Load Students
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-success"
-                    onClick={markAllPresent}
-                  >
-                    Mark All Present
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-danger"
-                    onClick={markAllAbsent}
-                  >
-                    Mark All Absent
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* Search and Filter */}
-            <div className="search-filter-container">
-              <div className="search-box">
-                <input
-                  type="text"
-                  placeholder="Search students by name or ID..."
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    filterStudents(e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Students Attendance Grid */}
-            <div className="attendance-grid">
-              <div className="attendance-header">
-                <span>Student Details</span>
-                <span>Attendance Status</span>
-                <span>Actions</span>
-              </div>
-
-              {filteredStudents.map(student => (
-                <div key={student._id} className="attendance-row">
-                  <div className="student-info">
-                    <div className="student-avatar">
-                      {student.profilePicture ? (
-                        <img src={`${BACKEND_BASE_URL}/${student.profilePicture}`} alt={student.username} />
-                      ) : (
-                        <div className="avatar-placeholder">
-                          {student.username.charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <div className="student-details">
-                      <h4>{student.username}</h4>
-                      <p>ID: {student._id}</p>
-                      <p>Department: {student.department}</p>
-                      <p>Email: {student.email}</p>
-                    </div>
-                  </div>
-
-                  <div className="attendance-status">
-                    <span className={`status-badge ${studentAttendance[student._id] || 'pending'}`}>
-                      {studentAttendance[student._id] === 'present' ? 'Present' :
-                       studentAttendance[student._id] === 'absent' ? 'Absent' :
-                       studentAttendance[student._id] === 'late' ? 'Late' : 'Not Marked'}
-                    </span>
-                  </div>
-
-                  <div className="attendance-actions">
-                    <button
-                      className={`btn-status present ${studentAttendance[student._id] === 'present' ? 'active' : ''}`}
-                      onClick={() => toggleAttendance(student._id, 'present')}
-                    >
-                      Present
-                    </button>
-                    <button
-                      className={`btn-status absent ${studentAttendance[student._id] === 'absent' ? 'active' : ''}`}
-                      onClick={() => toggleAttendance(student._id, 'absent')}
-                    >
-                      Absent
-                    </button>
-                    <button
-                      className={`btn-status late ${studentAttendance[student._id] === 'late' ? 'active' : ''}`}
-                      onClick={() => toggleAttendance(student._id, 'late')}
-                    >
-                      Late
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Submit Attendance */}
-            <div className="submit-attendance">
-              <button
-                className="btn-submit"
-                onClick={submitAttendance}
-                disabled={Object.keys(studentAttendance).length === 0}
-              >
-                Submit Attendance ({Object.keys(studentAttendance).length} students)
-              </button>
-            </div>
-
-            {/* Attendance Records */}
-            <div className="attendance-records">
-              <div className="records-header">
-                <h3>Recent Attendance Records</h3>
-                <button
-                  className={`btn-toggle-view ${showDayWiseView ? 'active' : ''}`}
-                  onClick={toggleDayWiseView}
-                >
-                  {showDayWiseView ? 'Show List View' : 'Show Day-wise View'}
-                </button>
-              </div>
-
-              {showDayWiseView ? (
-                /* Day-wise Attendance View */
-                <div className="day-wise-attendance">
-                  {dayWiseLoading ? (
-                    <p>Loading attendance records...</p>
-                  ) : dayWiseError ? (
-                    <p className="error">{dayWiseError}</p>
-                  ) : dayWiseAttendance.length === 0 ? (
-                    <p>No attendance records found for the last 7 days.</p>
-                  ) : (
-                    dayWiseAttendance.map(dayData => (
-                      <div key={dayData.date} className="day-attendance-card">
-                        <div className="day-header">
-                          <h4>{new Date(dayData.date).toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}</h4>
-                          <div className="day-summary">
-                            <span className="summary-item present">
-                              Present: {dayData.summary.present}
-                            </span>
-                            <span className="summary-item absent">
-                              Absent: {dayData.summary.absent}
-                            </span>
-                            <span className="summary-item late">
-                              Late: {dayData.summary.late}
-                            </span>
-                            <span className="summary-item total">
-                              Total: {dayData.summary.total}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="day-students-list">
-                          <table className="students-table">
-                            <thead>
-                              <tr>
-                                <th>Student Name</th>
-                                <th>Student ID</th>
-                                <th>Department</th>
-                                <th>Subject</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {dayData.records.map(record => (
-                                <tr key={record._id}>
-                                  <td>{record.student?.username || 'N/A'}</td>
-                                  <td>{record.student?._id || 'N/A'}</td>
-                                  <td>{record.student?.department || 'N/A'}</td>
-                                  <td>{record.subject}</td>
-                                  <td>
-                                    <span className={`status-badge ${record.status}`}>
-                                      {record.status}
-                                    </span>
-                                  </td>
-                                  <td>
-                                    <button
-                                      className="btn-small"
-                                      onClick={() => updateRecordStatus(record._id, 'present')}
-                                    >
-                                      Present
-                                    </button>
-                                    <button
-                                      className="btn-small"
-                                      onClick={() => updateRecordStatus(record._id, 'absent')}
-                                    >
-                                      Absent
-                                    </button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              ) : (
-                /* List View (Original) */
-                <div className="records-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Student</th>
-                        <th>Date</th>
-                        <th>Subject</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {attendanceRecords.slice(0, 10).map(record => (
-                        <tr key={record._id}>
-                          <td>{record.student?.username || 'N/A'}</td>
-                          <td>{new Date(record.date).toLocaleDateString()}</td>
-                          <td>{record.subject}</td>
-                          <td>
-                            <span className={`status-badge ${record.status}`}>
-                              {record.status}
-                            </span>
-                          </td>
-                          <td>
-                            <button
-                              className="btn-small"
-                              onClick={() => updateRecordStatus(record._id, 'present')}
-                            >
-                              Present
-                            </button>
-                            <button
-                              className="btn-small"
-                              onClick={() => updateRecordStatus(record._id, 'absent')}
-                            >
-                              Absent
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
-        );
       default:
         return <p>Select a section from the menu.</p>;
     }
