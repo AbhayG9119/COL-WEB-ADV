@@ -74,6 +74,15 @@ const academicCellApi = {
   getDocuments: (params = {}) => axiosInstance.get('/documents', { params }),
   verifyDocument: (id, verificationData) => axiosInstance.patch(`/documents/${id}/verify`, verificationData),
 
+  // Document Management from Student Profiles
+  getProfileDocuments: (params = {}) => axiosInstance.get('/documents/profiles', { params }),
+  getDocumentFileFromProfile: (profileId, documentType) => axiosInstance.get(`/documents/profiles/${profileId}/${documentType}/file`, {
+    responseType: 'blob'
+  }),
+  verifyDocumentInProfile: (profileId, documentType, verificationData) =>
+    axiosInstance.patch(`/documents/profiles/${profileId}/${documentType}/verify`, verificationData),
+  getDocumentsGroupedByStudent: () => axiosInstance.get('/documents/grouped-by-student'),
+
   // Task Management
   getTasks: (params = {}) => axiosInstance.get('/tasks', { params }),
   createTask: (taskData) => axiosInstance.post('/tasks', taskData),
@@ -90,6 +99,34 @@ const academicCellApi = {
   // Profile Management
   getProfile: () => axiosInstance.get('/profile'),
   updateProfile: (profileData) => axiosInstance.patch('/profile', profileData),
+
+  // Enhanced Document Management
+  uploadStudentDocument: (studentId, documentType, file, remarks) => {
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('documentType', documentType);
+    if (remarks) formData.append('remarks', remarks);
+
+    return axiosInstance.post(`/students/${studentId}/documents`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  getStudentDocuments: (studentId) => axiosInstance.get(`/students/${studentId}/documents`),
+  updateDocumentStatus: (documentId, status, remarks) =>
+    axiosInstance.patch(`/documents/${documentId}/status`, { status, remarks }),
+  deleteDocument: (documentId) => axiosInstance.delete(`/documents/${documentId}`),
+  getDocumentFile: (documentId) => axiosInstance.get(`/documents/${documentId}/file`, {
+    responseType: 'blob'
+  }),
+  getDocumentStats: () => axiosInstance.get('/documents/stats'),
+  updateStudentContact: (studentId, contactData) =>
+    axiosInstance.patch(`/students/${studentId}/contact`, contactData),
+
+  // Admission Form Management
+  saveAdmissionForm: (formData) => axiosInstance.post('/admission-form', formData),
 
   // Legacy methods (for backward compatibility)
   getMetrics: () => axiosInstance.get('/dashboard/metrics'),

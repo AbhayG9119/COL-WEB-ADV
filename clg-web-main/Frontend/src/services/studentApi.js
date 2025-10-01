@@ -33,6 +33,7 @@ axiosInstance.interceptors.response.use(
 
 const studentApi = {
   getProfile: () => axiosInstance.get('/profile'),
+  updateProfile: (data) => axiosInstance.patch('/profile', data),
   getDetailedProfile: () => axiosInstance.get('/detailed-profile'),
   getEvents: () => axiosInstance.get('/events'),
   registerForEvent: (eventId) =>
@@ -58,6 +59,15 @@ const studentApi = {
   getExamResults: () => axiosInstance.get('/exam-results'),
   getStudyMaterials: () => axiosInstance.get('/study-materials'),
   getCourseContent: () => axiosInstance.get('/course-content'),
+  getDocuments: () => axiosInstance.get('/documents'),
+  getDocumentById: (documentId) => axiosInstance.get(`/documents/${documentId}`),
+  getDocumentFile: (id) => axiosInstance.get(`/documents/${id}`, { responseType: 'blob' }),
+  downloadStudyMaterial: (id) => axiosInstance.get(`/study-materials/${id}/download`, { responseType: 'blob' }),
+  uploadDocument: (formData) => axiosInstance.post('/documents', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
 };
 
 export default studentApi;

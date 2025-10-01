@@ -41,9 +41,9 @@ api.interceptors.response.use(
 // Admin authentication functions
 export const adminAuth = {
   // Login admin
-  login: async (email, password) => {
+  login: async (email, password, captchaToken) => {
     try {
-      const response = await api.post('/admin/auth/login', { email, password });
+      const response = await api.post('/admin/auth/login', { email, password, captchaToken });
       const { token } = response.data;
 
       // Store token in localStorage
@@ -188,6 +188,20 @@ export const adminData = {
     }
   },
 
+  // Get student profiles by department
+  getStudentProfilesByDepartment: async (department, params = {}) => {
+    try {
+      const query = new URLSearchParams(params).toString();
+      const response = await api.get(`/admin/data/students/${department}?${query}`);
+      return { success: true, data: response.data.data, pagination: response.data.pagination };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to fetch student profiles by department'
+      };
+    }
+  },
+
   // Get student profile statistics
   getStudentProfileStats: async () => {
     try {
@@ -197,6 +211,32 @@ export const adminData = {
       return {
         success: false,
         error: error.response?.data?.message || 'Failed to fetch student profile statistics'
+      };
+    }
+  },
+
+  // Get single student profile by ID
+  getStudentProfileById: async (id) => {
+    try {
+      const response = await api.get(`/admin/data/student-profiles/${id}`);
+      return { success: true, data: response.data.data };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to fetch student profile'
+      };
+    }
+  },
+
+  // Update student profile
+  updateStudentProfile: async (id, data) => {
+    try {
+      const response = await api.put(`/admin/data/student-profiles/${id}`, data);
+      return { success: true, data: response.data.data, message: response.data.message };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Failed to update student profile'
       };
     }
   }
