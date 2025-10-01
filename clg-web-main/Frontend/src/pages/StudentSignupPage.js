@@ -1,18 +1,49 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ReCAPTCHA from 'react-google-recaptcha';
 import '../styles/AdminLogin.css';
 
 function StudentSignupPage() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [studentId, setStudentId] = useState('');
+  const [fatherName, setFatherName] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [address, setAddress] = useState('');
   const [department, setDepartment] = useState('');
+  const [year, setYear] = useState('');
+  const [semester, setSemester] = useState('');
+
+  const handleDepartmentChange = (e) => {
+    setDepartment(e.target.value);
+    setYear('');
+    setSemester('');
+  };
+
+  const getYearOptions = () => {
+    if (department === 'B.A' || department === 'B.Sc') {
+      return [1, 2, 3];
+    } else if (department === 'B.Ed') {
+      return [1, 2];
+    }
+    return [];
+  };
+
+  const getSemesterOptions = () => {
+    if (department === 'B.A' || department === 'B.Sc') {
+      return [1, 2, 3, 4, 5, 6];
+    } else if (department === 'B.Ed') {
+      return [1, 2, 3, 4];
+    }
+    return [];
+  };
+  const [mobileNumber, setMobileNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -31,9 +62,15 @@ function StudentSignupPage() {
       const response = await axios.post('http://localhost:5000/api/auth/student/signup', {
         username,
         email,
-        studentId,
+        fatherName,
+        dateOfBirth,
+        address,
         department,
+        year,
+        semester,
+        mobileNumber,
         password,
+        captchaToken: captchaValue,
       });
       setSuccess(response.data.message);
       setTimeout(() => {
@@ -41,6 +78,7 @@ function StudentSignupPage() {
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
+      setCaptchaValue(null);
     }
 
     setLoading(false);
@@ -86,33 +124,106 @@ function StudentSignupPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="studentId" className="form-label">Student ID</label>
+            <label htmlFor="fatherName" className="form-label">Father Name</label>
             <input
               type="text"
-              id="studentId"
+              id="fatherName"
               className="form-input"
-              placeholder="Enter your student ID"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
+              placeholder="Enter your father's name"
+              value={fatherName}
+              onChange={(e) => setFatherName(e.target.value)}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="course" className="form-label">Course</label>
+            <label htmlFor="dateOfBirth" className="form-label">Date of Birth</label>
+            <input
+              type="date"
+              id="dateOfBirth"
+              className="form-input"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="address" className="form-label">Address</label>
+            <textarea
+              id="address"
+              className="form-input"
+              placeholder="Enter your address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="mobileNumber" className="form-label">Mobile Number</label>
+            <input
+              type="text"
+              id="mobileNumber"
+              className="form-input"
+              placeholder="Enter your mobile number"
+              value={mobileNumber}
+              onChange={(e) => setMobileNumber(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="department" className="form-label">Department</label>
             <select
-              id="course"
+              id="department"
               className="form-input"
               value={department}
-              onChange={(e) => setDepartment(e.target.value)}
+              onChange={handleDepartmentChange}
               required
             >
-              <option value="">Select Course</option>
+              <option value="">Select Department</option>
               <option value="B.Sc">B.Sc</option>
               <option value="B.A">B.A</option>
               <option value="B.Ed">B.Ed</option>
             </select>
           </div>
+
+          {department && (
+            <>
+              <div className="form-group">
+                <label htmlFor="year" className="form-label">Year</label>
+                <select
+                  id="year"
+                  className="form-input"
+                  value={year}
+                  onChange={(e) => setYear(Number(e.target.value))}
+                  required
+                >
+                  <option value="">Select Year</option>
+                  {getYearOptions().map((yr) => (
+                    <option key={yr} value={yr}>{yr}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="semester" className="form-label">Semester</label>
+                <select
+                  id="semester"
+                  className="form-input"
+                  value={semester}
+                  onChange={(e) => setSemester(Number(e.target.value))}
+                  required
+                >
+                  <option value="">Select Semester</option>
+                  {getSemesterOptions().map((sem) => (
+                    <option key={sem} value={sem}>{sem}</option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
 
           <div className="form-group">
             <label htmlFor="password" className="form-label">Password</label>
@@ -140,9 +251,16 @@ function StudentSignupPage() {
             />
           </div>
 
+          <div className="form-group">
+            <ReCAPTCHA
+              sitekey="6LcLptQrAAAAAHdtlrO3jVvYFwFUE_ixdSKWkzaP"
+              onChange={(value) => setCaptchaValue(value)}
+            />
+          </div>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !captchaValue}
             className="admin-login-button"
           >
             {loading ? 'Signing up...' : 'Sign Up'}

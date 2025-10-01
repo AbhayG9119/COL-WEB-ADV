@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { adminAuth } from '../services/adminApi';
+import { adminAuth } from '../services/adminApi-enhanced';
 import '../styles/AdminLogin.css';
 
 function LoginPage() {
@@ -91,6 +91,7 @@ function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoFocus
+              autoComplete="email"
             />
           </div>
 
@@ -104,6 +105,7 @@ function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
             />
           </div>
 

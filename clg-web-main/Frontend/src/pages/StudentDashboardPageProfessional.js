@@ -3,9 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import studentApi from '../services/studentApi';
 import '../styles/StudentDashboard.css';
 import '../styles/StudentDashboardProfessional.css';
-import '../styles/StudentAvatar.css';
 
 const BACKEND_BASE_URL = 'http://localhost:5000';
+
+// Expected documents list with backend enum mapping
+const EXPECTED_DOCUMENTS = [
+  { name: '10th', type: '10th_marksheet' },
+  { name: '12th', type: '12th_marksheet' },
+  { name: 'Aadhar Card', type: 'aadhar_card' },
+  { name: 'Income Certificate', type: 'income_certificate' },
+  { name: 'Caste Certificate', type: 'caste_certificate' },
+  { name: 'Bank Passbook', type: 'bank_passbook' },
+  { name: 'Transfer Certificate', type: 'transfer_certificate' },
+  { name: 'Photo', type: 'photo' },
+  { name: 'Signature', type: 'signature' }
+];
 
 function StudentDashboardPageProfessional() {
   const [profile, setProfile] = useState(null);
@@ -16,12 +28,83 @@ function StudentDashboardPageProfessional() {
   const [examResults, setExamResults] = useState([]);
   const [studyMaterials, setStudyMaterials] = useState([]);
   const [courseContent, setCourseContent] = useState(null);
+  const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeSection, setActiveSection] = useState('profile');
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [selectedDocs, setSelectedDocs] = useState({});
+  const [uploadingDoc, setUploadingDoc] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedProfile, setEditedProfile] = useState({});
   const navigate = useNavigate();
+
+  // Function to view documents
+  const handleViewDocument = async (document) => {
+    try {
+      const response = await studentApi.getDocumentFile(document._id);
+      if (response && response.data) {
+        const blob = new Blob([response.data], { type: document.mimeType || 'application/octet-stream' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 1000);
+      } else {
+        alert('Document not available for viewing');
+      }
+    } catch (error) {
+      console.error('Error viewing document:', error);
+      alert('Error viewing document');
+    }
+  };
+
+  // Function to download study material
+  const handleDownloadStudyMaterial = async (material) => {
+    try {
+      const response = await studentApi.downloadStudyMaterial(material._id);
+      if (response && response.data) {
+        const blob = new Blob([response.data], { type: 'application/octet-stream' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = material.fileName;
+        link.click();
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 1000);
+      } else {
+        alert('Study material not available for download');
+      }
+    } catch (error) {
+      console.error('Error downloading study material:', error);
+      alert('Error downloading study material');
+    }
+  };
+
+  // Function to download document
+  const handleDownloadDocument = async (document) => {
+    try {
+      const response = await studentApi.getDocumentFile(document._id);
+      if (response && response.data) {
+        const blob = new Blob([response.data], { type: document.mimeType || 'application/octet-stream' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = document.fileName;
+        link.click();
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+        }, 1000);
+      } else {
+        alert('Document not available for download');
+      }
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      alert('Error downloading document');
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -64,6 +147,9 @@ function StudentDashboardPageProfessional() {
 
       const courseContentResponse = await studentApi.getCourseContent();
       setCourseContent(courseContentResponse.data);
+
+      const documentsResponse = await studentApi.getDocuments();
+      setDocuments(documentsResponse.data);
     } catch (err) {
       console.error('Error fetching data:', err);
       setError('An error occurred while fetching data');
@@ -105,6 +191,82 @@ function StudentDashboardPageProfessional() {
     setUploading(false);
   };
 
+  const handleFileChangeDoc = (e, docType) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedDocs(prev => ({ ...prev, [docType]: e.target.files[0] }));
+    }
+  };
+
+  const handleUploadDocument = async (docName) => {
+    const file = selectedDocs[docName];
+    if (!file) {
+      alert('Please select a file first.');
+      return;
+    }
+    setUploadingDoc(docName);
+    setError('');
+    try {
+      // Find the corresponding backend document type
+      const docConfig = EXPECTED_DOCUMENTS.find(doc => doc.name === docName);
+      const backendDocType = docConfig ? docConfig.type : docName;
+
+      const formData = new FormData();
+      formData.append('document', file);
+      formData.append('documentType', backendDocType);
+      await studentApi.uploadDocument(formData);
+      alert(`${docName} uploaded successfully!`);
+      // Clear selection
+      setSelectedDocs(prev => ({ ...prev, [docName]: null }));
+      // Refetch data to update documents list
+      await fetchData();
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'An error occurred during document upload';
+      setError(errorMessage);
+      alert(errorMessage);
+    }
+    setUploadingDoc('');
+  };
+
+  const handleEdit = () => {
+    setEditedProfile({
+      username: profile.username || '',
+      email: profile.email || '',
+      mobileNumber: profile.mobileNumber || '',
+      fatherName: profile.fatherName || '',
+      dateOfBirth: profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '',
+      address: profile.correspondenceAddress || ''
+    });
+    setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    setError('');
+    try {
+      const updateData = {
+        ...editedProfile,
+        address: editedProfile.address
+      };
+      delete updateData.correspondenceAddress;
+      const response = await studentApi.updateProfile(updateData);
+      if (response.data.success) {
+        setProfile(prev => ({ ...prev, ...editedProfile, correspondenceAddress: editedProfile.address }));
+        setIsEditing(false);
+        alert('Profile updated successfully!');
+      } else {
+        setError('Failed to update profile');
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'An error occurred during profile update';
+      setError(errorMessage);
+      alert(errorMessage);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedProfile({});
+  };
+
   const renderSection = () => {
     switch (activeSection) {
       case 'profile':
@@ -127,11 +289,39 @@ function StudentDashboardPageProfessional() {
                   )}
                 </div>
                 <div className="profile-details">
-                  <p><strong>Name:</strong> {profile.name || profile.username}</p>
-                  <p><strong>Email:</strong> {profile.email}</p>
-                  <p><strong>Student ID:</strong> {profile.studentId}</p>
+                  {isEditing ? (
+                    <>
+                      <p><strong>Name:</strong> <input type="text" value={editedProfile.username} onChange={(e) => setEditedProfile(prev => ({ ...prev, username: e.target.value }))} /></p>
+                      <p><strong>Email:</strong> <input type="email" value={editedProfile.email} onChange={(e) => setEditedProfile(prev => ({ ...prev, email: e.target.value }))} /></p>
+                      <p><strong>Phone:</strong> <input type="text" value={editedProfile.mobileNumber} onChange={(e) => setEditedProfile(prev => ({ ...prev, mobileNumber: e.target.value }))} /></p>
+                      <p><strong>Father Name:</strong> <input type="text" value={editedProfile.fatherName} onChange={(e) => setEditedProfile(prev => ({ ...prev, fatherName: e.target.value }))} /></p>
+                      <p><strong>Date of Birth:</strong> <input type="date" value={editedProfile.dateOfBirth} onChange={(e) => setEditedProfile(prev => ({ ...prev, dateOfBirth: e.target.value }))} /></p>
+                      <p><strong>Address:</strong> <input type="text" value={editedProfile.address} onChange={(e) => setEditedProfile(prev => ({ ...prev, address: e.target.value }))} /></p>
+                    </>
+                  ) : (
+                    <>
+                      <p><strong>Name:</strong> {profile.name || profile.username}</p>
+                      <p><strong>Email:</strong> {profile.email}</p>
+                      <p><strong>Phone:</strong> {profile.mobileNumber || 'N/A'}</p>
+                      <p><strong>Father Name:</strong> {profile.fatherName || 'N/A'}</p>
+                      <p><strong>Date of Birth:</strong> {profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : 'N/A'}</p>
+                      <p><strong>Address:</strong> {profile.correspondenceAddress || 'N/A'}</p>
+                    </>
+                  )}
                   <p><strong>Department:</strong> {profile.department || 'N/A'}</p>
+                  <p><strong>Year:</strong> {profile.year || 'N/A'}</p>
+                  <p><strong>Semester:</strong> {profile.semester || 'N/A'}</p>
                   <p><strong>Admission Date:</strong> {new Date(profile.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div className="profile-actions">
+                  {isEditing ? (
+                    <>
+                      <button onClick={handleSave}>Save</button>
+                      <button onClick={handleCancel}>Cancel</button>
+                    </>
+                  ) : (
+                    <button onClick={handleEdit}>Edit Profile</button>
+                  )}
                 </div>
                 <div className="profile-photo-container">
                   <input type="file" accept="image/*" onChange={handleFileChange} />
@@ -166,7 +356,7 @@ function StudentDashboardPageProfessional() {
                   <h3>Academic Profile</h3>
                   <p>Roll Number: {detailedProfile.rollNumber}</p>
                   <p>College: {detailedProfile.college}</p>
-                  <p>Course: {detailedProfile.course}</p>
+                  <p>Department: {detailedProfile.course}</p>
                   <p>Branch: {detailedProfile.branch}</p>
                   <p>Admission Date: {detailedProfile.admissionDate ? new Date(detailedProfile.admissionDate).toLocaleDateString() : 'N/A'}</p>
                   <p>Admission Mode: {detailedProfile.admissionMode}</p>
@@ -195,7 +385,7 @@ function StudentDashboardPageProfessional() {
                     <table border="1" cellPadding="5" cellSpacing="0">
                       <thead>
                         <tr>
-                          <th>Course</th>
+                          <th>Department</th>
                           <th>Stream Name</th>
                           <th>Board Name</th>
                           <th>Roll Number</th>
@@ -257,10 +447,10 @@ function StudentDashboardPageProfessional() {
             )}
           </div>
         );
-      case 'course':
+      case 'department':
         return (
           <div className="section-content">
-            <h2>Course Registration</h2>
+            <h2>Department Registration</h2>
             {courseContent ? (
               <div>
                 {courseContent.semesters.map((semester) => (
@@ -440,19 +630,30 @@ function StudentDashboardPageProfessional() {
             <table>
               <thead>
                 <tr>
+                  <th>Category</th>
                   <th>Subject</th>
-                  <th>Exam Date</th>
+                  <th>Marks</th>
+                  <th>Max Marks</th>
                   <th>Grade</th>
+                  <th>Date</th>
                 </tr>
               </thead>
               <tbody>
                 {examResults.map((result, index) => (
                   <tr key={index}>
+                    <td>{result.category}</td>
                     <td>{result.subject}</td>
-                    <td>{result.date}</td>
+                    <td>{result.marks}</td>
+                    <td>{result.maxMarks}</td>
                     <td className="grade">{result.grade}</td>
+                    <td>{new Date(result.date).toLocaleDateString()}</td>
                   </tr>
                 ))}
+                {examResults.length === 0 && (
+                  <tr>
+                    <td colSpan="6" style={{ textAlign: 'center' }}>No results available yet.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -466,9 +667,195 @@ function StudentDashboardPageProfessional() {
                 <div key={index} className="material-item">
                   <h4>{material.title}</h4>
                   <p>{material.description}</p>
-                  <button className="btn-download">Download</button>
+                  <button
+                    className="btn-download"
+                    onClick={() => handleDownloadStudyMaterial(material)}
+                    title="Download Material"
+                  >
+                    Download
+                  </button>
                 </div>
               ))}
+            </div>
+          </div>
+        );
+      case 'documents':
+        return (
+          <div className="section-content">
+            <h2>Documents & Certificates</h2>
+
+            {/* Document Summary - Always Visible */}
+            <div className="documents-overview">
+              <div className="documents-summary">
+                <h3>Document Summary</h3>
+                <div className="summary-stats">
+                  <div className="stat-item">
+                    <span className="stat-number">{documents ? documents.length : 0}</span>
+                    <span className="stat-label">Total Documents</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-number">{documents ? documents.filter(doc => doc.status === 'verified').length : 0}</span>
+                    <span className="stat-label">Verified</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-number">{documents ? documents.filter(doc => doc.status === 'pending').length : 0}</span>
+                    <span className="stat-label">Pending</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-number">{documents ? documents.filter(doc => doc.status === 'rejected').length : 0}</span>
+                    <span className="stat-label">Rejected</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Document Categories Status - Always Visible */}
+            <div className="document-categories">
+              <h3>Document Categories Status</h3>
+              <div className="categories-grid">
+                {[
+                  {
+                    name: 'Personal Photo',
+                    docs: documents ? documents.filter(doc => doc.documentType === 'photo') : []
+                  },
+                  {
+                    name: 'Aadhar Card',
+                    docs: documents ? documents.filter(doc => doc.documentType === 'aadhar_card') : []
+                  },
+                  {
+                    name: 'Mark Sheets',
+                    docs: documents ? documents.filter(doc => doc.documentType === '10th_marksheet' || doc.documentType === '12th_marksheet') : []
+                  },
+                  {
+                    name: 'Certificates',
+                    docs: documents ? documents.filter(doc => doc.documentType === 'transfer_certificate' || doc.documentType === 'migration_certificate') : []
+                  },
+                  {
+                    name: 'Domicile',
+                    docs: documents ? documents.filter(doc => doc.documentType === 'income_certificate') : []
+                  },
+                  {
+                    name: 'Caste Certificate',
+                    docs: documents ? documents.filter(doc => doc.documentType === 'caste_certificate') : []
+                  },
+                  {
+                    name: 'Other Documents',
+                    docs: documents ? documents.filter(doc =>
+                      doc.documentType !== 'photo' &&
+                      doc.documentType !== 'aadhar_card' &&
+                      doc.documentType !== '10th_marksheet' &&
+                      doc.documentType !== '12th_marksheet' &&
+                      doc.documentType !== 'transfer_certificate' &&
+                      doc.documentType !== 'migration_certificate' &&
+                      doc.documentType !== 'income_certificate' &&
+                      doc.documentType !== 'caste_certificate'
+                    ) : []
+                  }
+                ].map((category, index) => (
+                  <div key={index} className="category-card">
+                    <div className="category-header">
+                      <h4>{category.name}</h4>
+                    </div>
+                    <div className="category-stats">
+                      <span className="category-count">{category.docs.length}</span>
+                      <span className="category-label">documents</span>
+                    </div>
+                    <div className="category-status">
+                      {category.docs.filter(doc => doc.status === 'verified').length > 0 && (
+                        <span className="status-approved">{category.docs.filter(doc => doc.status === 'verified').length} Verified</span>
+                      )}
+                      {category.docs.filter(doc => doc.status === 'pending').length > 0 && (
+                        <span className="status-pending">{category.docs.filter(doc => doc.status === 'pending').length} Pending</span>
+                      )}
+                      {category.docs.filter(doc => doc.status === 'rejected').length > 0 && (
+                        <span className="status-rejected">{category.docs.filter(doc => doc.status === 'rejected').length} Rejected</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Documents Table - Only show if documents exist */}
+            {documents && documents.length > 0 && (
+              <div className="documents-table-container">
+                <h3>Uploaded Documents</h3>
+                <table className="documents-table">
+                  <thead>
+                    <tr>
+                      <th>Document Type</th>
+                      <th>Original Name</th>
+                      <th>File Size</th>
+                      <th>Status</th>
+                      <th>Remarks</th>
+                      <th>Uploaded Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {documents.map((document, index) => (
+                      <tr key={index}>
+                        <td>{document.documentType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</td>
+                        <td>{document.fileName}</td>
+                        <td>{document.fileSize ? `${(document.fileSize / 1024).toFixed(2)} KB` : 'N/A'}</td>
+                        <td>
+                          <span className={`status-badge ${document.status.toLowerCase()}`}>
+                            {document.status}
+                          </span>
+                        </td>
+                        <td>{document.remarks || 'N/A'}</td>
+                        <td>{new Date(document.uploadDate).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}</td>
+                        <td>
+                          <button
+                            className="btn-view"
+                            onClick={() => handleViewDocument(document)}
+                            title="View Document"
+                          >
+                            View
+                          </button>
+                          <button
+                            className="btn-download"
+                            onClick={() => handleDownloadDocument(document)}
+                            title="Download Document"
+                          >
+                            Download
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Document Upload Section - Always Visible */}
+            <div className="document-upload-section">
+              <h4>Upload Documents</h4>
+              <div className="upload-grid">
+                {EXPECTED_DOCUMENTS.map((doc, index) => (
+                  <div key={index} className="upload-item">
+                    <span className="upload-name">{doc.name}</span>
+                    <input
+                      type="file"
+                      accept="image/*,application/pdf"
+                      onChange={(e) => handleFileChangeDoc(e, doc.name)}
+                    />
+                    <button
+                      className="btn-upload"
+                      onClick={() => handleUploadDocument(doc.name)}
+                      disabled={uploadingDoc === doc.name || !selectedDocs[doc.name]}
+                    >
+                      {uploadingDoc === doc.name ? 'Uploading...' : 'Upload'}
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         );
@@ -487,7 +874,8 @@ function StudentDashboardPageProfessional() {
         <ul>
           <li className={activeSection === 'profile' ? 'active' : ''} onClick={() => setActiveSection('profile')}>Profile & Admission</li>
           <li className={activeSection === 'detailedProfile' ? 'active' : ''} onClick={() => setActiveSection('detailedProfile')}>View Profile</li>
-          <li className={activeSection === 'course' ? 'active' : ''} onClick={() => setActiveSection('course')}>Course Registration</li>
+          <li className={activeSection === 'documents' ? 'active' : ''} onClick={() => setActiveSection('documents')}>Documents</li>
+          <li className={activeSection === 'department' ? 'active' : ''} onClick={() => setActiveSection('department')}>Department Registration</li>
           <li className={activeSection === 'timetable' ? 'active' : ''} onClick={() => setActiveSection('timetable')}>Timetable & Attendance</li>
           <li className={activeSection === 'assignments' ? 'active' : ''} onClick={() => setActiveSection('assignments')}>Assignments</li>
           <li className={activeSection === 'exams' ? 'active' : ''} onClick={() => setActiveSection('exams')}>Exams & Results</li>
