@@ -21,6 +21,8 @@ import Dashboard from './pages/Dashboard';
 import NCC from './pages/NCC';
 import Scholarship from './pages/Scholarship';
 import AdmissionProcess from './pages/AdmissionProcess';
+
+
 import AdmissionQuery from './pages/AdmissionQuery';
 import LoginPage from './pages/LoginPage';
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -28,7 +30,6 @@ import StudentSignupPage from './pages/StudentSignupPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import HODDashboardPage from './pages/HODDashboardPage';
 import StudentDashboardPageProfessional from './pages/StudentDashboardPageProfessional';
-import StudentDashboardPageEnhanced from './pages/StudentDashboardPageEnhanced';
 import FacultyDashboardPageEnhanced from './pages/FacultyDashboardPageEnhanced';
 import AcademicCellDashboardPage from './pages/AcademicCellDashboardPage';
 import './styles/main.css';
@@ -101,3 +102,6 @@ function AppWithRouter() {
   );
 }
 export default AppWithRouter;
+
+
+
