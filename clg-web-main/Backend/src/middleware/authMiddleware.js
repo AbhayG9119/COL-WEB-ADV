@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken';
 import Student from '../models/Student.js';
+import StudentBA from '../models/StudentBA.js';
+import StudentBSc from '../models/StudentBSc.js';
+import StudentBEd from '../models/StudentBEd.js';
 import Faculty from '../models/Faculty.js';
 import Admin from '../models/Admin.js';
 import AcademicCell from '../models/AcademicCell.js';
@@ -21,13 +24,22 @@ const authMiddleware = async (req, res, next) => {
     console.log('Decoded token:', decoded);
     let user = await Student.findById(decoded.id);
     if (!user) {
-      user = await Faculty.findById(decoded.id);
+      user = await StudentBA.findById(decoded.id);
       if (!user) {
-        user = await Admin.findById(decoded.id);
+        user = await StudentBSc.findById(decoded.id);
         if (!user) {
-          user = await AcademicCell.findById(decoded.id);
+          user = await StudentBEd.findById(decoded.id);
           if (!user) {
-            return res.status(401).json({ message: 'User not found' });
+            user = await Faculty.findById(decoded.id);
+            if (!user) {
+              user = await Admin.findById(decoded.id);
+              if (!user) {
+                user = await AcademicCell.findById(decoded.id);
+                if (!user) {
+                  return res.status(401).json({ message: 'User not found' });
+                }
+              }
+            }
           }
         }
       }

@@ -14,6 +14,7 @@ import facultyRoutes from './routes/faculty.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import adminDataRoutes from './routes/adminDataRoutes.js';
 import academicCellRoutes from './routes/academicCell.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 const app = express();
 
@@ -21,7 +22,16 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "http://localhost:5000"],
+      connectSrc: ["'self'", "http://localhost:5000"],
+      // Add other directives as needed for development
+    },
+  },
+}));
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true // If using cookies, but for JWT, not necessary
@@ -30,7 +40,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from uploads directory with proper CORS headers
-app.use('/uploads', cors({
+app.use('/uploads', (req, res, next) => {
+  res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, cors({
   origin: 'http://localhost:3000',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -46,7 +59,8 @@ app.get('/uploads/profile-pictures/:filename', cors({
     root: 'uploads/profile-pictures',
     headers: {
       'Access-Control-Allow-Origin': 'http://localhost:3000',
-      'Access-Control-Allow-Credentials': 'true'
+      'Access-Control-Allow-Credentials': 'true',
+      'Cross-Origin-Resource-Policy': 'cross-origin'
     }
   });
 });
