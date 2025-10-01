@@ -9,6 +9,8 @@
   grid-template-areas:
     "top-bar top-bar"
     "left-nav main-area";
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Top Bar */
@@ -125,6 +127,9 @@
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
   padding: 2rem 0;
+  overflow-y: auto;
+  height: 100%;
+  position: relative;
 }
 
 .nav-list {
@@ -1073,5 +1078,518 @@
 
   .department-card {
     padding: 1rem;
+  }
+}
+
+/* Admission Form Styles */
+.admission-form {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  margin-top: 2rem;
+  animation: fadeInUp 0.6s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.admission-form h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 1.5rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+}
+
+/* Fieldset Styles */
+.admission-form fieldset {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  position: relative;
+}
+
+.admission-form fieldset:last-of-type {
+  margin-bottom: 0;
+}
+
+.admission-form legend {
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 1.1rem;
+  padding: 0 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #667eea;
+  position: absolute;
+  top: -12px;
+  left: 20px;
+}
+
+/* Form Labels and Inputs */
+.admission-form label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.admission-form label:last-child {
+  margin-bottom: 0;
+}
+
+.admission-form input,
+.admission-form select,
+.admission-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: white;
+  box-sizing: border-box;
+}
+
+.admission-form input:focus,
+.admission-form select:focus,
+.admission-form textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Qualification and Semester Result Entries */
+.qualification-entry,
+.semester-result-entry {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.qualification-entry label,
+.semester-result-entry label {
+  display: inline-block;
+  width: 48%;
+  margin-bottom: 0.5rem;
+  margin-right: 4%;
+  font-size: 0.85rem;
+}
+
+.qualification-entry label:nth-child(even),
+.semester-result-entry label:nth-child(even) {
+  margin-right: 0;
+}
+
+.qualification-entry button,
+.semester-result-entry button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.qualification-entry button:hover,
+.semester-result-entry button:hover {
+  background: #c53030;
+  transform: scale(1.05);
+}
+
+/* Add Qualification/Semester Button */
+.admission-form button[type="button"] {
+  background: #48bb78;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.admission-form button[type="button"]:hover {
+  background: #38a169;
+  transform: translateY(-1px);
+}
+
+/* Document Upload Section */
+.documents-upload-section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.documents-upload-header {
+  margin-bottom: 1.5rem;
+}
+
+.documents-upload-header h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+}
+
+.upload-instructions {
+  color: #718096;
+  font-size: 0.9rem;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Document Upload Grid */
+.document-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.document-upload-item {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.document-upload-item:hover {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+}
+
+.document-upload-item label {
+  display: block;
+  text-align: center;
+  cursor: pointer;
+  margin: 0;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.document-upload-item input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Documents List */
+.documents-list {
+  margin-top: 1.5rem;
+}
+
+.documents-list h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.document-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.document-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.document-info {
+  margin-bottom: 1rem;
+}
+
+.document-type {
+  display: block;
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.file-name {
+  display: block;
+  color: #718096;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.file-size {
+  display: block;
+  color: #a0aec0;
+  font-size: 0.8rem;
+}
+
+.btn-remove {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.btn-remove:hover {
+  background: #c53030;
+  transform: scale(1.02);
+}
+
+/* Document Summary */
+.documents-summary {
+  background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+  border: 1px solid #c6f6d5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.documents-summary h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+/* Required Documents Checklist */
+.required-documents-checklist {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.required-documents-checklist h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.75rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.checklist-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.checklist-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.checklist-name {
+  flex: 1;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.9rem;
+}
+
+.checklist-status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.checklist-status.completed {
+  background: #c6f6d5;
+  color: #38a169;
+}
+
+.checklist-status.missing {
+  background: #fed7d7;
+  color: #e53e3e;
+}
+
+.checklist-status.optional {
+  background: #e6fffa;
+  color: #319795;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 0 0 20px 20px;
+  padding: 1.5rem;
+  margin: 2rem -2rem -2rem -2rem;
+}
+
+.form-actions .action-btn {
+  min-width: 150px;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+}
+
+/* Responsive Design for Admission Form */
+@media (max-width: 768px) {
+  .admission-form {
+    padding: 1rem;
+    margin: 1rem -1rem -1rem -1rem;
+    max-height: 90vh;
+  }
+
+  .admission-form fieldset {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .admission-form legend {
+    font-size: 1rem;
+    left: 10px;
+  }
+
+  .qualification-entry label,
+  .semester-result-entry label {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .document-upload-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .documents-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    margin: 1rem -1rem -1rem -1rem;
+  }
+
+  .form-actions .action-btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .admission-form h3 {
+    font-size: 1.25rem;
+  }
+
+  .admission-form input,
+  .admission-form select,
+  .admission-form textarea {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .qualification-entry,
+  .semester-result-entry {
+    padding: 0.75rem;
+  }
+
+  .document-upload-item {
+    padding: 0.75rem;
+  }
+
+  .document-card {
+    padding: 0.75rem;
   }
 }

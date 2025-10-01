@@ -1,5 +1,92 @@
 /* Professional College ERP Attendance System Styles */
 
+/* Faculty Dashboard Layout */
+.faculty-dashboard-container {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "nav main";
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: 60px 1fr;
+  height: 100vh;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.dashboard-header {
+  grid-area: header;
+  background-color: #60a9f1;
+  color: #ecf0f1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dashboard-header button {
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-header button:hover {
+  background-color: #c0392b;
+}
+
+/* Navigation Sidebar */
+.dashboard-nav {
+  grid-area: nav;
+  background-color: #87898b;
+  color: #bdc3c7;
+  padding-top: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+}
+
+.dashboard-nav ul {
+  list-style: none;
+}
+
+.dashboard-nav ul li {
+  padding: 15px 25px;
+  cursor: pointer;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+  transition: background-color 0.3s ease, border-left-color 0.3s ease;
+}
+
+.dashboard-nav ul li:hover {
+  background-color: #3d566e;
+  border-left-color: #2980b9;
+  color: #ecf0f1;
+}
+
+.dashboard-nav ul li.active {
+  background-color: #2980b9;
+  border-left-color: #3498db;
+  color: #ecf0f1;
+  font-weight: 700;
+}
+
+/* Main Content Area */
+.dashboard-main {
+  grid-area: main;
+  padding: 20px 30px;
+  overflow-y: auto;
+  background-color: #ecf0f1;
+  border-left: 1px solid #ddd;
+  min-height: 0;
+}
+
 /* Main Container */
 .section-content {
   padding: 20px;
