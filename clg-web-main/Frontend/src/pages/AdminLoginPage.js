@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { adminAuth } from '../services/adminApi-enhanced';
+import { adminAuth } from '../services/adminApi';
 import '../styles/AdminLogin.css';
 
 function AdminLoginPage() {

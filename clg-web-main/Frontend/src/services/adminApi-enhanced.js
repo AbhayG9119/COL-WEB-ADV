@@ -174,90 +174,6 @@ export const adminData = {
     }
   },
 
-  // Get all faculty
-  getFaculty: async () => {
-    try {
-      const response = await api.get('/admin/data/faculty');
-      return { success: true, data: response.data.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch faculty'
-      };
-    }
-  },
-
-  // Get single faculty by ID
-  getFacultyById: async (facultyId) => {
-    try {
-      const response = await api.get(`/admin/data/faculty/${facultyId}`);
-      return { success: true, data: response.data.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch faculty'
-      };
-    }
-  },
-
-  // Update faculty by ID
-  updateFaculty: async (facultyId, facultyData) => {
-    try {
-      const response = await api.put(`/admin/data/faculty/${facultyId}`, facultyData);
-      return { success: true, data: response.data.data, message: response.data.message };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to update faculty'
-      };
-    }
-  },
-
-  // Delete faculty by ID
-  deleteFaculty: async (facultyId) => {
-    try {
-      const response = await api.delete(`/admin/data/faculty/${facultyId}`);
-      return { success: true, message: response.data.message };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to delete faculty'
-      };
-    }
-  },
-
-  // Upload faculty profile picture
-  uploadFacultyPicture: async (facultyId, file) => {
-    try {
-      const formData = new FormData();
-      formData.append('profilePicture', file);
-      const response = await api.post(`/admin/data/faculty/${facultyId}/upload-picture`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      return { success: true, data: response.data.data, message: response.data.message };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to upload profile picture'
-      };
-    }
-  },
-
-  // Get faculty statistics
-  getFacultyStats: async () => {
-    try {
-      const response = await api.get('/admin/data/faculty/stats');
-      return { success: true, data: response.data.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch faculty statistics'
-      };
-    }
-  },
-
   // Get all student profiles with pagination and search
   getStudentProfiles: async (params = {}) => {
     try {
@@ -340,9 +256,9 @@ export const adminData = {
   },
 
   // Respond to admission query
-  respondToAdmissionQuery: async (queryId, reply) => {
+  respondToAdmissionQuery: async (queryId, response) => {
     try {
-      const response = await api.post(`/admin/data/admission-queries/${queryId}/respond`, { response: reply });
+      const response = await api.post(`/admin/data/admission-queries/${queryId}/respond`, { response });
       return { success: true, data: response.data.data, message: response.data.message };
     } catch (error) {
       return {
@@ -392,9 +308,9 @@ export const adminData = {
   },
 
   // Respond to NCC query
-  respondToNCCQuery: async (queryId, reply) => {
+  respondToNCCQuery: async (queryId, response) => {
     try {
-      const response = await api.post(`/admin/data/ncc-queries/${queryId}/respond`, { response: reply });
+      const response = await api.post(`/admin/data/ncc-queries/${queryId}/respond`, { response });
       return { success: true, data: response.data.data, message: response.data.message };
     } catch (error) {
       return {

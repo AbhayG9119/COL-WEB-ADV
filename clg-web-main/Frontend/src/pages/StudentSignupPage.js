@@ -7,9 +7,6 @@ import '../styles/AdminLogin.css';
 function StudentSignupPage() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [fatherName, setFatherName] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [address, setAddress] = useState('');
   const [department, setDepartment] = useState('');
   const [year, setYear] = useState('');
   const [semester, setSemester] = useState('');
@@ -62,9 +59,6 @@ function StudentSignupPage() {
       const response = await axios.post('http://localhost:5000/api/auth/student/signup', {
         username,
         email,
-        fatherName,
-        dateOfBirth,
-        address,
         department,
         year,
         semester,
@@ -123,42 +117,7 @@ function StudentSignupPage() {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="fatherName" className="form-label">Father Name</label>
-            <input
-              type="text"
-              id="fatherName"
-              className="form-input"
-              placeholder="Enter your father's name"
-              value={fatherName}
-              onChange={(e) => setFatherName(e.target.value)}
-              required
-            />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="dateOfBirth" className="form-label">Date of Birth</label>
-            <input
-              type="date"
-              id="dateOfBirth"
-              className="form-input"
-              value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="address" className="form-label">Address</label>
-            <textarea
-              id="address"
-              className="form-input"
-              placeholder="Enter your address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-          </div>
 
           <div className="form-group">
             <label htmlFor="mobileNumber" className="form-label">Mobile Number</label>

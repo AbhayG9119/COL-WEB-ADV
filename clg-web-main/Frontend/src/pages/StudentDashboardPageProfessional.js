@@ -231,10 +231,7 @@ function StudentDashboardPageProfessional() {
     setEditedProfile({
       username: profile.username || '',
       email: profile.email || '',
-      mobileNumber: profile.mobileNumber || '',
-      fatherName: profile.fatherName || '',
-      dateOfBirth: profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : '',
-      address: profile.correspondenceAddress || ''
+      mobileNumber: profile.mobileNumber || ''
     });
     setIsEditing(true);
   };
@@ -242,14 +239,9 @@ function StudentDashboardPageProfessional() {
   const handleSave = async () => {
     setError('');
     try {
-      const updateData = {
-        ...editedProfile,
-        address: editedProfile.address
-      };
-      delete updateData.correspondenceAddress;
-      const response = await studentApi.updateProfile(updateData);
+      const response = await studentApi.updateProfile(editedProfile);
       if (response.data.success) {
-        setProfile(prev => ({ ...prev, ...editedProfile, correspondenceAddress: editedProfile.address }));
+        setProfile(prev => ({ ...prev, ...editedProfile }));
         setIsEditing(false);
         alert('Profile updated successfully!');
       } else {
@@ -294,18 +286,12 @@ function StudentDashboardPageProfessional() {
                       <p><strong>Name:</strong> <input type="text" value={editedProfile.username} onChange={(e) => setEditedProfile(prev => ({ ...prev, username: e.target.value }))} /></p>
                       <p><strong>Email:</strong> <input type="email" value={editedProfile.email} onChange={(e) => setEditedProfile(prev => ({ ...prev, email: e.target.value }))} /></p>
                       <p><strong>Phone:</strong> <input type="text" value={editedProfile.mobileNumber} onChange={(e) => setEditedProfile(prev => ({ ...prev, mobileNumber: e.target.value }))} /></p>
-                      <p><strong>Father Name:</strong> <input type="text" value={editedProfile.fatherName} onChange={(e) => setEditedProfile(prev => ({ ...prev, fatherName: e.target.value }))} /></p>
-                      <p><strong>Date of Birth:</strong> <input type="date" value={editedProfile.dateOfBirth} onChange={(e) => setEditedProfile(prev => ({ ...prev, dateOfBirth: e.target.value }))} /></p>
-                      <p><strong>Address:</strong> <input type="text" value={editedProfile.address} onChange={(e) => setEditedProfile(prev => ({ ...prev, address: e.target.value }))} /></p>
                     </>
                   ) : (
                     <>
                       <p><strong>Name:</strong> {profile.name || profile.username}</p>
                       <p><strong>Email:</strong> {profile.email}</p>
                       <p><strong>Phone:</strong> {profile.mobileNumber || 'N/A'}</p>
-                      <p><strong>Father Name:</strong> {profile.fatherName || 'N/A'}</p>
-                      <p><strong>Date of Birth:</strong> {profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : 'N/A'}</p>
-                      <p><strong>Address:</strong> {profile.correspondenceAddress || 'N/A'}</p>
                     </>
                   )}
                   <p><strong>Department:</strong> {profile.department || 'N/A'}</p>
