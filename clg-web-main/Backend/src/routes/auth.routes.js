@@ -10,7 +10,6 @@ import StudentBEd from '../models/StudentBEd.js';
 import Faculty from '../models/Faculty.js';
 import Admin from '../models/Admin.js';
 import AcademicCell from '../models/AcademicCell.js';
-import DetailedStudentProfile from '../models/DetailedStudentProfile.js';
 import { generateOTP, storeOTP, verifyOTP, sendOTP } from '../utils/otp.js';
 
 const router = express.Router();
@@ -57,7 +56,7 @@ router.post('/faculty/login', async (req, res) => {
 // Student Signup
 router.post('/student/signup', async (req, res) => {
   try {
-    const { username, email, password, department, year, semester, mobileNumber, fatherName, dateOfBirth, address, admissionDate, captchaToken } = req.body;
+    const { username, email, password, department, year, semester, mobileNumber, captchaToken } = req.body;
 
     // Temporarily disable captcha verification for student signup
     // const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${captchaToken}`;
@@ -81,26 +80,8 @@ router.post('/student/signup', async (req, res) => {
     if (existingStudent) {
       return res.status(400).json({ message: 'Email already registered' });
     }
-    const student = new StudentModel({ username, email, password, department, year, semester, mobileNumber, fatherName, dateOfBirth, correspondenceAddress: address, admissionDate });
+    const student = new StudentModel({ username, email, password, department, year, semester, mobileNumber });
     await student.save();
-
-    // Create corresponding detailed student profile with initial data
-    const DetailedStudentProfileModel = DetailedStudentProfile;
-    const detailedProfile = new DetailedStudentProfileModel({
-      student: student._id,
-      fatherName: fatherName || '',
-      dateOfBirth: dateOfBirth || null,
-      correspondenceAddress: address || '',
-      course: department,
-      currentYear: year,
-      currentSemester: semester,
-      email: email,
-      contactNumber: mobileNumber,
-      username: username,
-      admissionDate: admissionDate || null
-    });
-    await detailedProfile.save();
-
     res.status(201).json({ message: 'Student registered successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });

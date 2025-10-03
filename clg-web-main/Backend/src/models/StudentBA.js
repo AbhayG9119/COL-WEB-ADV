@@ -1,24 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const semesterResultSchema = new mongoose.Schema({
-  year: { type: String, required: true },
-  semester: { type: String, required: true },
-  status: { type: String, required: true },
-  marksPercentage: { type: String, required: true },
-  carryOverPapers: { type: String, default: 'NIL' }
-});
-
-const qualificationDetailSchema = new mongoose.Schema({
-  course: { type: String, required: true },
-  streamName: { type: String, required: true },
-  boardName: { type: String, required: true },
-  rollNumber: { type: String, required: true },
-  passingYear: { type: String, required: true },
-  subjectDetails: { type: String },
-  marksPercentage: { type: String, required: true }
-});
-
 const studentBASchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
@@ -29,45 +11,6 @@ const studentBASchema = new mongoose.Schema({
   profilePicture: { type: String },
   role: { type: String, default: 'student' },
   createdAt: { type: Date, default: Date.now },
-
-  // Personal Profile
-  fatherName: { type: String },
-  motherName: { type: String },
-  dateOfBirth: { type: Date },
-  religion: { type: String },
-  caste: { type: String },
-  domicile: { type: String },
-  aadharNumber: { type: String },
-
-  // Academic Profile
-  rollNumber: { type: String },
-  college: { type: String },
-  course: { type: String, default: 'B.A' },
-  branch: { type: String },
-  admissionDate: { type: Date },
-  admissionMode: { type: String },
-  admissionSession: { type: String },
-  academicSession: { type: String },
-  currentYear: { type: String },
-  currentSemester: { type: String },
-  currentAcademicStatus: { type: String },
-  scholarshipApplied: { type: String },
-
-  // Hostel Details
-  hostelApplied: { type: String },
-
-  // Contact Details
-  contactNumber: { type: String },
-  fatherContactNumber: { type: String },
-  correspondenceAddress: { type: String },
-  permanentAddress: { type: String },
-
-  // Qualification Details
-  qualifications: [qualificationDetailSchema],
-
-  // Year/Semester Result Details
-  semesterResults: [semesterResultSchema],
-
   // Document references
   documents: [{
     documentType: {
@@ -93,7 +36,7 @@ const studentBASchema = new mongoose.Schema({
   // Contact information (can be updated by academic cell)
   mobileNumber: { type: String },
   emailId: { type: String }
-}, { timestamps: true });
+});
 
 // Password hashing middleware
 studentBASchema.pre('save', async function(next) {

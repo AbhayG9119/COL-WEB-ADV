@@ -1,5 +1,3 @@
-
-
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
@@ -252,38 +250,34 @@ router.get('/detailed-profile', authMiddleware, async (req, res) => {
     let detailedProfile = await DetailedStudentProfile.findOne({ student: req.user._id });
 
     if (!detailedProfile) {
-      // Get the basic student profile to populate detailed profile
-      const StudentModel = getStudentModel(req.user.department);
-      const student = await StudentModel.findById(req.user._id);
-
-      // Create a default detailed profile if not found, populated with basic student data
+      // Create a default detailed profile if not found
       detailedProfile = new DetailedStudentProfile({
         student: req.user._id,
-        fatherName: student.fatherName || '',
+        fatherName: '',
         motherName: '',
-        dateOfBirth: student.dateOfBirth || null,
+        dateOfBirth: null,
         religion: '',
         caste: '',
         domicile: '',
         aadharNumber: '',
         rollNumber: '',
         college: '',
-        course: student.department || '',
+        course: '',
         branch: '',
         admissionDate: null,
         admissionMode: '',
         admissionSession: '',
         academicSession: '',
-        currentYear: student.year || '',
-        currentSemester: student.semester || '',
+        currentYear: '',
+        currentSemester: '',
         currentAcademicStatus: '',
         scholarshipApplied: '',
         hostelApplied: '',
-        contactNumber: student.mobileNumber || '',
+        contactNumber: '',
         fatherContactNumber: '',
-        correspondenceAddress: student.correspondenceAddress || '',
+        correspondenceAddress: '',
         permanentAddress: '',
-        email: student.email || req.user.email,
+        email: req.user.email,
         qualifications: [],
         semesterResults: []
       });
@@ -348,7 +342,7 @@ router.put('/detailed-profile', authMiddleware, async (req, res) => {
 // Update basic student profile
 router.patch('/profile', authMiddleware, async (req, res) => {
   try {
-    const { username, email, mobileNumber, fatherName, dateOfBirth, address } = req.body;
+    const { username, email, mobileNumber } = req.body;
 
     // Validate mobile number if provided
     if (mobileNumber && !/^\d{10}$/.test(mobileNumber)) {
@@ -368,9 +362,6 @@ router.patch('/profile', authMiddleware, async (req, res) => {
     if (username) updateData.username = username;
     if (email) updateData.email = email;
     if (mobileNumber) updateData.mobileNumber = mobileNumber;
-    if (fatherName !== undefined) updateData.fatherName = fatherName;
-    if (dateOfBirth !== undefined) updateData.dateOfBirth = dateOfBirth;
-    if (address !== undefined) updateData.correspondenceAddress = address;
 
     // Get the student model based on department
     const StudentModel = getStudentModel(req.user.department);

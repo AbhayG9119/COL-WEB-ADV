@@ -1,7 +1,4 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
-import multer from 'multer';
-import path from 'path';
 import Contact from '../models/Contact.js';
 import AdmissionQuery from '../models/AdmissionQuery.js';
 import NCCQuery from '../models/NCCQuery.js';
@@ -9,7 +6,6 @@ import Event from '../models/Event.js';
 import Course from '../models/Course.js';
 import Hod from '../models/Hod.js';
 import Student from '../models/Student.js';
-import Faculty from '../models/Faculty.js';
 import DetailedStudentProfile from '../models/DetailedStudentProfile.js';
 import Attendance from '../models/Attendance.js';
 import Form from '../models/formModel.js';
@@ -19,35 +15,6 @@ const router = express.Router();
 
 // Apply admin authentication middleware to all routes
 router.use(adminAuthMiddleware);
-
-// Configure multer for profile picture uploads
-const profilePictureStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/profile-pictures/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, req.params.id + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const uploadProfilePicture = multer({
-  storage: profilePictureStorage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|webp/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Invalid file type. Only JPEG, JPG, PNG, WEBP allowed for profile pictures.'));
-    }
-  }
-});
 
 // Get all contacts with pagination and search
 router.get('/contacts', async (req, res) => {
@@ -304,171 +271,6 @@ router.get('/students', async (req, res) => {
       data: students
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
-  }
-});
-
-// Get all faculty
-router.get('/faculty', async (req, res) => {
-  try {
-    const faculty = await Faculty.find();
-    res.json({
-      success: true,
-      count: faculty.length,
-      data: faculty
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
-  }
-});
-
-// Get faculty statistics
-router.get('/faculty/stats', async (req, res) => {
-  try {
-    const totalFaculty = await Faculty.countDocuments();
-    const todayFaculty = await Faculty.countDocuments({
-      createdAt: {
-        $gte: new Date(new Date().setHours(0, 0, 0, 0))
-      }
-    });
-
-    res.json({
-      success: true,
-      data: {
-        totalFaculty,
-        todayFaculty
-      }
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
-  }
-});
-
-// Get single faculty by ID
-router.get('/faculty/:id', async (req, res) => {
-  try {
-    const faculty = await Faculty.findById(req.params.id);
-    if (!faculty) {
-      return res.status(404).json({
-        success: false,
-        message: 'Faculty not found'
-      });
-    }
-    res.json({
-      success: true,
-      data: faculty
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
-  }
-});
-
-// Update faculty by ID
-router.put('/faculty/:id', async (req, res) => {
-  try {
-    const updates = req.body;
-
-    // If password is being updated, hash it
-    if (updates.password) {
-      const salt = await bcrypt.genSalt(12);
-      updates.password = await bcrypt.hash(updates.password, salt);
-    }
-
-    const faculty = await Faculty.findByIdAndUpdate(req.params.id, updates, { new: true });
-
-    if (!faculty) {
-      return res.status(404).json({
-        success: false,
-        message: 'Faculty not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: faculty,
-      message: 'Faculty updated successfully'
-    });
-  } catch (error) {
-    if (error.code === 11000) { // Duplicate key error
-      res.status(400).json({
-        success: false,
-        message: 'Username or email already exists'
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
-    }
-  }
-});
-
-// Delete faculty by ID
-router.delete('/faculty/:id', async (req, res) => {
-  try {
-    const faculty = await Faculty.findByIdAndDelete(req.params.id);
-
-    if (!faculty) {
-      return res.status(404).json({
-        success: false,
-        message: 'Faculty not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      message: 'Faculty deleted successfully'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Server error'
-    });
-  }
-});
-
-// Upload profile picture for faculty
-router.post('/faculty/:id/upload-picture', uploadProfilePicture.single('profilePicture'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: 'No file uploaded'
-      });
-    }
-
-    const faculty = await Faculty.findByIdAndUpdate(
-      req.params.id,
-      { profilePicture: req.file.filename },
-      { new: true }
-    );
-
-    if (!faculty) {
-      return res.status(404).json({
-        success: false,
-        message: 'Faculty not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: faculty,
-      message: 'Profile picture uploaded successfully'
-    });
-  } catch (error) {
-    console.error('Error uploading profile picture:', error);
     res.status(500).json({
       success: false,
       message: 'Server error'

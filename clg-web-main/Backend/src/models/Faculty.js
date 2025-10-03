@@ -2,32 +2,12 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const facultySchema = new mongoose.Schema({
-  // Basic Information
   username: {
     type: String,
     required: true,
     unique: true,
     trim: true
   },
-  fullName: {
-    type: String,
-    trim: true
-  },
-  
-  department: {
-    type: String,
-    required: true
-  },
-  designation: {
-    type: String,
-    enum: ['Professor', 'Associate Professor', 'Assistant Professor', 'Lecturer', 'Senior Lecturer'],
-    default: 'Lecturer'
-  },
-  dateOfJoining: {
-    type: Date
-  },
-
-  // Contact Details
   email: {
     type: String,
     required: true,
@@ -35,109 +15,105 @@ const facultySchema = new mongoose.Schema({
     lowercase: true,
     trim: true
   },
-  mobileNumber: {
-    type: String,
-    trim: true
-  },
-  address: {
-    type: String,
-    trim: true
-  },
-
-  // Professional Details
-  subject: {
-    type: String,
-    required: true
-  },
-  subjectsTaught: [{
-    type: String,
-    trim: true
-  }],
-  assignedClasses: [{
-    classId: {
-      type: String,
-      required: true
-    },
-    className: {
-      type: String,
-      required: true
-    },
-    subjects: [{
-      subjectId: {
-        type: String,
-        required: true
-      },
-      subjectName: {
-        type: String,
-        required: true
-      }
-    }]
-  }],
-  teachingExperience: {
-    type: Number,
-    min: 0
-  },
-
-  // Administrative Roles
-  administrativeRoles: [{
-    role: { type: String, trim: true },
-    description: { type: String, trim: true }
-  }],
-
-  // Documents
-  idProof: {
-    type: String, // file path
-    trim: true
-  },
-  qualificationCertificates: [{
-    type: String, // file paths
-    trim: true
-  }],
-  appointmentLetter: {
-    type: String, // file path
-    trim: true
-  },
-
-  // Attendance & Schedule
-  weeklyTimetable: {
-    type: Map,
-    of: [{
-      subject: String,
-      time: String,
-      room: String
-    }]
-  },
-  leaveRecords: [{
-    startDate: Date,
-    endDate: Date,
-    reason: String,
-    status: {
-      type: String,
-      enum: ['pending', 'approved', 'rejected'],
-      default: 'pending'
-    }
-  }],
-
-  // Additional
-  profilePicture: {
-    type: String, // file path
-    trim: true
-  },
-  status: {
-    type: String,
-    enum: ['active', 'inactive', 'on-leave'],
-    default: 'active'
-  },
-
-  // Authentication
   password: {
     type: String,
     required: true,
     minlength: 6
   },
+  department: {
+    type: String,
+    required: true
+  },
+  subject: {
+    type: String,
+    required: true
+  },
+  subjectsTaught: [{
+    type: String
+  }],
   role: {
     type: String,
     default: 'faculty'
+  },
+  // Enhanced profile fields
+  fullName: {
+    type: String,
+    trim: true
+  },
+  employeeId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    trim: true
+  },
+  designation: {
+    type: String,
+    trim: true
+  },
+  dateOfJoining: {
+    type: Date
+  },
+  officialEmail: {
+    type: String,
+    lowercase: true,
+    trim: true
+  },
+  mobileNumber: {
+    type: String,
+    trim: true
+  },
+  officeRoom: {
+    type: String,
+    trim: true
+  },
+  teachingExperience: {
+    type: String,
+    trim: true
+  },
+  specialization: [{
+    type: String
+  }],
+  researchInterests: [{
+    type: String
+  }],
+  publications: [{
+    type: String
+  }],
+  certifications: [{
+    type: String
+  }],
+  achievements: [{
+    type: String
+  }],
+  administrativeRoles: [{
+    type: String
+  }],
+  weeklyTimetable: {
+    type: mongoose.Schema.Types.Mixed
+  },
+  leaveRecords: [{
+    type: mongoose.Schema.Types.Mixed
+  }],
+  shortBio: {
+    type: String,
+    trim: true
+  },
+  officeHours: {
+    type: String,
+    trim: true
+  },
+  // Document fields
+  profilePicture: {
+    type: String
+  },
+  idProof: {
+    type: String
+  },
+  qualificationCertificates: [{
+    type: String
+  }],
+  appointmentLetter: {
+    type: String
   },
   createdAt: {
     type: Date,
