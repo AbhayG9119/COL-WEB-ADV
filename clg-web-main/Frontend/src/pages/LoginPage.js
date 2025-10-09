@@ -5,8 +5,12 @@ import { adminAuth } from '../services/adminApi';
 import ReCAPTCHA from 'react-google-recaptcha';
 import '../styles/AdminLogin.css';
 
+import adminImage from '../images/admin.jpg';
+import staffImage from '../images/staff.jpg';
+import studentImage from '../images/student.jpg';
+
 function LoginPage() {
-  const [role, setRole] = useState('student');
+  const [role, setRole] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -30,7 +34,6 @@ function LoginPage() {
       let response;
 
       if (role === 'admin') {
-        // Use admin authentication
         const result = await adminAuth.login(email, password, captchaValue);
         if (result.success) {
           navigate('/admin/dashboard');
@@ -74,16 +77,13 @@ function LoginPage() {
     setLoading(true);
     try {
       if (!otpSent) {
-        // Send OTP
         await axios.post('http://localhost:5000/api/auth/student/forgot-password', { email: forgotEmail });
         setOtpSent(true);
       } else if (otpSent && !newPassword) {
-        // Verify OTP
         await axios.post('http://localhost:5000/api/auth/student/verify-otp', { email: forgotEmail, otp });
         setError('');
         setSuccess('OTP verified. Please enter new password.');
       } else if (otpSent && newPassword) {
-        // Reset password
         await axios.post('http://localhost:5000/api/auth/student/reset-password', { email: forgotEmail, otp, newPassword });
         setError('');
         setSuccess('Password reset successful. Please login with new password.');
@@ -101,35 +101,48 @@ function LoginPage() {
     setLoading(false);
   };
 
+  const handleRoleClick = (selectedRole) => {
+    setRole(selectedRole);
+    setError('');
+    setSuccess('');
+    setForgotPasswordMode(false);
+    setOtpSent(false);
+    setOtp('');
+    setNewPassword('');
+    setForgotEmail('');
+    setFailedLoginAttempt(false);
+    setEmail('');
+    setPassword('');
+    setCaptchaValue(null);
+  };
+
   return (
     <div className="admin-login-container">
-      <div className="admin-login-card">
+      <div className={`admin-login-card ${role === '' ? 'full-screen' : ''}`}>
         <div className="admin-login-header">
           <h1 className="admin-login-title">College Portal Login</h1>
           <p className="admin-login-subtitle">Access your dashboard</p>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
-
-        {success && <div className="success-message">{success}</div>}
-
-        {!forgotPasswordMode && (
-          <form onSubmit={handleSubmit} className="admin-login-form">
-            <div className="form-group">
-              <label htmlFor="role" className="form-label">I AM A:</label>
-              <select
-                id="role"
-                className="form-input"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-              >
-                <option value="student">Student</option>
-                <option value="faculty">Faculty</option>
-                <option value="academic-cell">Academic Cell</option>
-                <option value="admin">Admin</option>
-              </select>
+        {role === '' && (
+          <div className="login-selection">
+            <div className="login-option" onClick={() => handleRoleClick('admin')}>
+              <img src={adminImage} alt="Admin Login" className="login-image" />
+              <button className="login-button">Admin Login</button>
             </div>
+            <div className="login-option" onClick={() => handleRoleClick('faculty')}>
+              <img src={staffImage} alt="Staff Login" className="login-image" />
+              <button className="login-button">Staff Login</button>
+            </div>
+            <div className="login-option" onClick={() => handleRoleClick('student')}>
+              <img src={studentImage} alt="Student Login" className="login-image" />
+              <button className="login-button">Student Login</button>
+            </div>
+          </div>
+        )}
 
+        {role !== '' && !forgotPasswordMode && (
+          <form onSubmit={handleSubmit} className="admin-login-form">
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email Address</label>
               <input
@@ -170,6 +183,22 @@ function LoginPage() {
               className="admin-login-button"
             >
               {loading ? 'Authenticating...' : 'Login'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setForgotPasswordMode(true)}
+              className="forgot-password-link"
+            >
+              Forgot Password?
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleRoleClick('')}
+              className="cancel-button"
+            >
+              Back to Login Selection
             </button>
           </form>
         )}

@@ -8,7 +8,6 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Courses from './pages/Courses';
 import Eligibility from './pages/Eligibility';
-import Admission from './pages/Admission';
 import Faculty from './pages/Faculty';
 import FreeCourses from './pages/FreeCourses';
 import ComputerBasics from './pages/ComputerBasics';
@@ -34,7 +33,8 @@ import FacultyDashboardPageEnhanced from './pages/FacultyDashboardPageEnhanced';
 import AcademicCellDashboardPage from './pages/AcademicCellDashboardPage';
 import './styles/main.css';
 import './styles/footer.css';
-import './App.css'
+import './App.css';
+import Chatbot from './components/Chatbot';
 
 
 function App() {
@@ -54,6 +54,7 @@ function App() {
   ];
 
   const showFooter = !noFooterRoutes.includes(location.pathname);
+
 
   return (
     <div className="app">
@@ -90,6 +91,7 @@ function App() {
         </Routes>
       </main>
       {showFooter && <Footer />}
+      <Chatbot />
     </div>
   );
 }

@@ -1,24 +1,33 @@
 /* Admin Login Page Styles */
 .admin-login-container {
   min-height: 100vh;
-  background: wheat;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 20px;
+  align-items: center;
+  background-color: #f7f7f7;
+  padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .admin-login-card {
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  width: 400px;
+  max-width: 100%;
+  text-align: center;
   position: relative;
   overflow: hidden;
+  animation: slideIn 0.6s ease-out;
+}
+
+.admin-login-card.full-screen {
+  border-radius: 0;
+  box-shadow: none;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
 }
 
 .admin-login-card::before {
@@ -32,15 +41,14 @@
 }
 
 .admin-login-header {
-  text-align: center;
   margin-bottom: 30px;
 }
 
 .admin-login-title {
   font-size: 28px;
   font-weight: 700;
+  margin-bottom: 10px;
   color: #2d3748;
-  margin-bottom: 8px;
   letter-spacing: -0.5px;
 }
 
@@ -50,24 +58,71 @@
   margin: 0;
 }
 
-.admin-login-form {
+.login-selection {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.login-option {
+  flex: 1;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  align-items: center;
+}
+
+.login-option:hover {
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.login-image {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.login-button {
+  background-color: #d35400;
+  color: white;
+  border: none;
+  padding: 10px 0;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #e67e22;
+}
+
+.admin-login-form {
+  text-align: left;
 }
 
 .form-group {
-  position: relative;
+  margin-bottom: 15px;
 }
 
 .form-label {
   display: block;
-  font-size: 14px;
+  margin-bottom: 6px;
   font-weight: 600;
   color: #4a5568;
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 14px;
 }
 
 .form-input {
@@ -149,6 +204,26 @@
 .admin-login-button:disabled:hover {
   transform: none;
   box-shadow: none;
+}
+
+.forgot-password-link {
+  margin-top: 10px;
+  color: #2980b9;
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  font-size: 14px;
+}
+
+.cancel-button {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
 }
 
 .error-message {
@@ -238,8 +313,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.admin-login-card {
-  animation: slideIn 0.6s ease-out;
 }
