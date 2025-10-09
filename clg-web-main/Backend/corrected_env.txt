@@ -8,3 +8,5 @@ SMTP_PASSWORD=fjlo dwfz jxlc poip
 FROM_NAME=College Admin
 FROM_EMAIL=admin@college.com
 ADMIN_EMAIL=your_real_admin_email@gmail.com
+N8N_WEBHOOK_URL=https://clgai.app.n8n.cloud/webhook/fb2bcc3a-0d89-4e01-b21e-93aa3133a635/chat
+USE_N8N=true

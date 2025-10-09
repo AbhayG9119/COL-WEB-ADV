@@ -17,6 +17,7 @@ import facultyRoutes from './routes/faculty.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import adminDataRoutes from './routes/adminDataRoutes.js';
 import academicCellRoutes from './routes/academicCell.routes.js';
+import chatbotRoutes from './routes/chatbot.routes.js';
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use('/api/faculty', facultyRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/admin/data', adminDataRoutes);
 app.use('/api/academic-cell', academicCellRoutes);
+app.use('/api', chatbotRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
