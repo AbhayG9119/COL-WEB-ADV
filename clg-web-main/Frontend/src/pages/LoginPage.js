@@ -116,12 +116,42 @@ function LoginPage() {
     setCaptchaValue(null);
   };
 
+  const getTitle = () => {
+    switch (role) {
+      case 'admin':
+        return 'Admin Login';
+      case 'faculty':
+        return 'Staff Login';
+      case 'student':
+        return 'Student Login';
+      case 'academic-cell':
+        return 'Academic Cell Login';
+      default:
+        return 'College Portal Login';
+    }
+  };
+
+  const getSubtitle = () => {
+    switch (role) {
+      case 'admin':
+        return 'Secure access to administration panel';
+      case 'faculty':
+        return 'Access your staff dashboard';
+      case 'student':
+        return 'Access your student dashboard';
+      case 'academic-cell':
+        return 'Academic administration access';
+      default:
+        return 'Access your dashboard';
+    }
+  };
+
   return (
     <div className="admin-login-container">
       <div className={`admin-login-card ${role === '' ? 'full-screen' : ''}`}>
         <div className="admin-login-header">
-          <h1 className="admin-login-title">College Portal Login</h1>
-          <p className="admin-login-subtitle">Access your dashboard</p>
+          <h1 className="admin-login-title">{getTitle()}</h1>
+          <p className="admin-login-subtitle">{getSubtitle()}</p>
         </div>
 
         {role === '' && (
