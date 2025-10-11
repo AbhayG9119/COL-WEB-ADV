@@ -61,6 +61,6 @@ studentSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-const Student = mongoose.model('Student', studentSchema);
+const StudentBEd = mongoose.model('StudentBEd', studentSchema);
 
-export default Student;
+export default StudentBEd;

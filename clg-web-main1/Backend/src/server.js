@@ -6,6 +6,9 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import chatbotRoutes from './routes/chatbot.routes.js';
+import nccRoutes from './routes/ncc.routes.js';
+import admissionRoutes from './routes/admission.routes.js';
+import contactRoutes from './routes/contact.routes.js';
 
 dotenv.config();
 
@@ -31,9 +34,15 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Serve static files from uploads directory
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/ncc-query', nccRoutes);
+app.use('/api/admission-query', admissionRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

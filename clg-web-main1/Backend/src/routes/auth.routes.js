@@ -1,5 +1,5 @@
 import express from 'express';
-import { login } from '../controllers/authController.js';
+import { login, signup } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -7,5 +7,10 @@ const router = express.Router();
 // @desc    Authenticate user & get token
 // @access  Public
 router.post('/login', login);
+
+// @route   POST /api/auth/student/signup
+// @desc    Register a new student
+// @access  Public
+router.post('/student/signup', signup);
 
 export default router;
