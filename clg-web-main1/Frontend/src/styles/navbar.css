@@ -1,0 +1,65 @@
+/* Navbar Styles */
+.header {
+  background-color: #4CAF50;
+  color: white;
+  padding: 2% 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.logo h1 {
+  font-size: 2vw;
+  margin: 0;
+}
+
+.nav ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.nav li {
+  margin-left: 5%;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2vw;
+}
+
+.nav a:hover {
+  text-decoration: none;
+}
+
+/* Responsive Navbar */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 5% 5%;
+  }
+
+  .logo h1 {
+    font-size: 5vw;
+    margin-bottom: 5%;
+  }
+
+  .nav ul {
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+  }
+
+  .nav li {
+    margin-left: 0;
+    margin-bottom: 5%;
+  }
+
+  .nav a {
+    font-size: 4vw;
+  }
+}

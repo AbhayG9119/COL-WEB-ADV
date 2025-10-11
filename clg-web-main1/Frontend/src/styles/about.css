@@ -1,0 +1,291 @@
+/* About Page Styles */
+
+/* Header Section */
+.about-header {
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 40px 20px;
+  background: #daeef7;
+  color: #b81616;
+  border-radius: 20px;
+  width: 100%;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.about-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.about-para {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+  color: black;
+}
+
+/* Container */
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* About Section */
+.about-section {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.about-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.about-text h2 {
+  font-size: 2.2rem;
+  color: #b81616;
+  margin-bottom: 20px;
+}
+
+.about-text p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.about-section img {
+  flex: 1;
+  max-width: 500px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Mission and Vision Section */
+.about-mission-vision {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+}
+
+.about-card {
+  flex: 1;
+  min-width: 300px;
+  background: #f9f9f9;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.about-card h3 {
+  font-size: 1.8rem;
+  color: #b81616;
+  margin-bottom: 15px;
+}
+
+.about-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #666;
+}
+
+/* Core Values Section */
+.about-values {
+  margin-bottom: 60px;
+}
+
+.about-values h2 {
+  font-size: 2.5rem;
+  color: #b81616;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.about-values ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.about-values li {
+  background: #e8f4f8;
+  padding: 20px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  color: #333;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .about-header h1 {
+    font-size: 2.2rem;
+  }
+
+  .about-para {
+    font-size: 1.1rem;
+  }
+
+  .about-section {
+    gap: 30px;
+  }
+
+  .about-section img {
+    max-width: 400px;
+  }
+
+  .about-mission-vision {
+    gap: 30px;
+  }
+
+  .about-card {
+    padding: 25px;
+  }
+
+  .about-values h2 {
+    font-size: 2.2rem;
+  }
+
+  .about-values li {
+    padding: 18px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-header h1 {
+    font-size: 2rem;
+  }
+
+  .about-para {
+    font-size: 1rem;
+  }
+
+  .about-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .about-mission-vision {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .about-values ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-header {
+    padding: 30px 15px;
+    margin-top: 15px;
+    margin-bottom: 30px;
+  }
+
+  .about-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .about-para {
+    font-size: 1rem;
+  }
+
+  .about-container {
+    padding: 0 15px;
+  }
+
+  .about-section {
+    margin-bottom: 40px;
+  }
+
+  .about-text h2 {
+    font-size: 1.8rem;
+  }
+
+  .about-text p {
+    font-size: 1rem;
+  }
+
+  .about-section img {
+    max-width: 100%;
+  }
+
+  .about-mission-vision {
+    margin-bottom: 40px;
+  }
+
+  .about-card {
+    padding: 20px;
+  }
+
+  .about-card h3 {
+    font-size: 1.5rem;
+  }
+
+  .about-card p {
+    font-size: 0.95rem;
+  }
+
+  .about-values {
+    margin-bottom: 40px;
+  }
+
+  .about-values h2 {
+    font-size: 2rem;
+  }
+
+  .about-values li {
+    padding: 15px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .about-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .about-para {
+    font-size: 0.9rem;
+  }
+
+  .about-text h2 {
+    font-size: 1.6rem;
+  }
+
+  .about-text p {
+    font-size: 0.95rem;
+  }
+
+  .about-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .about-card p {
+    font-size: 0.9rem;
+  }
+
+  .about-values h2 {
+    font-size: 1.8rem;
+  }
+
+  .about-values li {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+}
