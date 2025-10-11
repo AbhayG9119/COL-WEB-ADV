@@ -49,15 +49,37 @@ function NCC() {
     const errors = validate();
     setFormErrors(errors);
     if (Object.keys(errors).length === 0) {
-      // Simulate submission (static frontend)
-      alert("✅ Your NCC query has been submitted successfully! (Note: This is a static demo; in production, it would send to backend.)");
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        course: '',
-        message: ''
-      });
+      try {
+        const response = await fetch('http://localhost:5000/api/ncc-query', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            studentName: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            course: formData.course,
+            reason: formData.message
+          }),
+        });
+
+        if (response.ok) {
+          alert("✅ Your NCC query has been submitted successfully!");
+          setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            course: '',
+            message: ''
+          });
+        } else {
+          alert("❌ Something went wrong. Try again!");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("❌ Error submitting form! Please check your internet connection.");
+      }
     }
   };
 

@@ -16,20 +16,36 @@ function AdmissionQuery() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simulate submission (static frontend)
-    alert("✅ Form Submitted Successfully! (Note: This is a static demo; in production, it would send to backend.)");
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      location: '',
-      pincode: '',
-      course: '',
-      message: ''
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/admission-query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        alert("✅ Admission query submitted successfully!");
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          location: '',
+          pincode: '',
+          course: '',
+          message: ''
+        });
+      } else {
+        alert("❌ Something went wrong. Try again!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("❌ Error submitting form! Please check your internet connection.");
+    }
   };
 
   return (
