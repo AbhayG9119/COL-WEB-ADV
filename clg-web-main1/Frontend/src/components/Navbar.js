@@ -53,7 +53,6 @@ const Navbar = () => {
           <li><Link to="/faculty" onClick={() => setMenuOpen(false)}>Faculty</Link></li>
           <li><Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link></li>
           <li><Link to="/login" className="auth-btn login-btn" onClick={() => setMenuOpen(false)}>Login</Link></li>
-          <li><Link to="/signup" className="auth-btn signup-btn" onClick={() => setMenuOpen(false)}>Sign Up</Link></li>
         </ul>
       </nav>
     </>
