@@ -18,6 +18,16 @@ const facultySchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  designation: {
+    type: String,
+    required: true,
+    trim: true
+  },
   department: {
     type: String,
     required: true
@@ -29,6 +39,26 @@ const facultySchema = new mongoose.Schema({
   subjectsTaught: [{
     type: String
   }],
+  qualifications: {
+    type: String,
+    trim: true
+  },
+  joiningDate: {
+    type: Date,
+    required: true
+  },
+  phone: {
+    type: String,
+    trim: true
+  },
+  address: {
+    type: String,
+    trim: true
+  },
+  profilePicture: {
+    type: String,
+    default: null
+  },
   role: {
     type: String,
     default: 'faculty'

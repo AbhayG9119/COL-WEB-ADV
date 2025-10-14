@@ -67,47 +67,4 @@ export const login = async (req, res) => {
   }
 };
 
-export const signup = async (req, res) => {
-  const { username, email, department, year, semester, mobileNumber, password } = req.body;
 
-  if (!username || !email || !department || !year || !semester || !mobileNumber || !password) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
-  try {
-    let StudentModel;
-    if (department === 'B.A') {
-      StudentModel = StudentBAS;
-    } else if (department === 'B.Sc') {
-      StudentModel = StudentBSc;
-    } else if (department === 'B.Ed') {
-      StudentModel = StudentBEd;
-    } else {
-      return res.status(400).json({ message: 'Invalid department' });
-    }
-
-    // Check if user already exists
-    const existingUser = await StudentModel.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Create new user
-    const user = new StudentModel({
-      name: username,
-      email,
-      department,
-      year,
-      semester,
-      mobileNumber,
-      password
-    });
-
-    await user.save();
-
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};

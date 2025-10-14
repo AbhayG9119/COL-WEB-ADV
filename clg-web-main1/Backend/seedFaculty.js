@@ -104,7 +104,10 @@ async function createFaculty() {
         department,
         subject,
         subjectsTaught,
-        role: 'faculty'
+        role: 'faculty',
+        name: username,
+        designation: 'Lecturer',
+        joiningDate: new Date('2023-01-01')
       });
 
       await faculty.save();
