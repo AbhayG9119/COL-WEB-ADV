@@ -20,11 +20,12 @@ import Scholarship from './pages/Scholarship';
 import AdmissionProcess from './pages/AdmissionProcess';
 import AdmissionQuery from './pages/AdmissionQuery';
 import LoginPage from './pages/LoginPage';
-import Signup from './pages/Signup';
 import AdminLogin from './pages/AdminLogin';
 import AdminPanel from './pages/AdminPanel';
 import StaffPanel from './pages/StaffPanel';
+import ProtectedRoute from './components/ProtectedRoute';
 import StudentPanel from './pages/StudentPanel';
+import UploadPhoto from './components/Staff Pannel/UploadPhoto';
 import './styles/main.css';
 import './styles/footer.css';
 import './App.css';
@@ -57,10 +58,10 @@ function App() {
           <Route path="/ncc" element={<NCC />} />
           <Route path="/scholarship" element={<Scholarship />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/staff" element={<StaffPanel />} />
+          <Route path="/staff" element={<ProtectedRoute role="staff"><StaffPanel /></ProtectedRoute>} />
+          <Route path="/staff/upload-photo" element={<ProtectedRoute role="staff"><UploadPhoto /></ProtectedRoute>} />
           <Route path="/student" element={<StudentPanel />} />
           <Route path="/admin/dashboard" element={<AdminPanel />} />
           <Route path="/faculty/dashboard" element={<StaffPanel />} />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaDotCircle, FaFolder } from 'react-icons/fa';
+import StaffSidebar from '../components/Staff Pannel/StaffSidebar';
 import Dashboard from '../components/Staff Pannel/Dashboard';
 import Profile from '../components/Staff Pannel/Profile';
 import UploadPhoto from '../components/Staff Pannel/UploadPhoto';
@@ -9,7 +10,12 @@ import Circulars from '../components/Staff Pannel/Circulars';
 import MarkAttendance from '../components/Staff Pannel/MarkAttendance';
 import AttendanceReport from '../components/Staff Pannel/AttendanceReport';
 import Messaging from '../components/Staff Pannel/Messaging';
-import EnquiryReport from '../components/Staff Pannel/EnquiryReport';
+import ReportCard from '../components/Staff Pannel/ReportCard';
+import Settings from '../components/Staff Pannel/Settings';
+import LeaveManagement from '../components/Staff Pannel/LeaveManagement';
+import Timetable from '../components/Staff Pannel/Timetable';
+import Payroll from '../components/Staff Pannel/Payroll';
+import AssignClass from '../components/Staff Pannel/AssignClass';
 import '../styles/AdminPanel.css';
 
 const StaffPanel = () => {
@@ -18,30 +24,50 @@ const StaffPanel = () => {
 
   const menus = [
     { name: 'Dashboard', sub: [] },
-    { name: 'Profile', sub: [] },
-    { name: 'Upload Photo', sub: [] },
-    { name: 'Assignments', sub: ['Create Assignment', 'View Assignments'] },
-    { name: 'Circulars', sub: [] },
-    { name: 'Attendance', sub: ['Mark Attendance', 'Attendance Report'] },
-    { name: 'Messaging', sub: [] },
-    { name: 'Enquiry Report', sub: [] }
+    { name: 'Profile Management', sub: ['Profile', 'Upload Photo', 'Contact Info'] },
+    { name: 'Class Assignment Management', sub: ['Assign Class/Subject', 'View Assignments'] },
+    { name: 'Attendance Management', sub: ['Attendance Entry', 'Attendance View', 'Daily/Monthly Reports'] },
+    { name: 'Leave Management', sub: ['Apply for Leave', 'View Leave History'] },
+    { name: 'Messaging', sub: ['Send/Receive Messages', 'Alerts'] },
+    { name: 'Timetable', sub: [] },
+    { name: 'Circular/Notices', sub: ['View Notices', 'Download'] },
+    { name: 'Work Management', sub: ['Assignments', 'Reports'] },
+    { name: 'Report Card', sub: [] },
+    { name: 'Payroll', sub: ['View Salary', 'Payslip'] },
+    { name: 'Settings', sub: ['Preferences', 'Logout'] }
   ];
 
   const componentMap = {
     'Dashboard': Dashboard,
     'Profile': Profile,
     'Upload Photo': UploadPhoto,
-    'Create Assignment': CreateAssignment,
+    'Assign Class/Subject': AssignClass,
     'View Assignments': ViewAssignments,
-    'Circulars': Circulars,
-    'Mark Attendance': MarkAttendance,
-    'Attendance Report': AttendanceReport,
-    'Messaging': Messaging,
-    'Enquiry Report': EnquiryReport
+    'Attendance Entry': MarkAttendance,
+    'Attendance View': AttendanceReport,
+    'Daily/Monthly Reports': AttendanceReport,
+    'Apply for Leave': LeaveManagement,
+    'View Leave History': LeaveManagement,
+    'Send/Receive Messages': Messaging,
+    'Alerts': Messaging,
+    'Timetable': Timetable,
+    'View Notices': Circulars,
+    'Download': Circulars,
+    'Assignments': CreateAssignment,
+    'Reports': ViewAssignments,
+    'Report Card': ReportCard,
+    'View Salary': Payroll,
+    'Payslip': Payroll,
+    'Preferences': Settings,
+    'Logout': () => { localStorage.removeItem('token'); window.location.href = '/login'; }
   };
 
   const renderContent = () => {
     const Component = componentMap[activeMenu];
+    if (typeof Component === 'function' && Component.name === 'Logout') {
+      Component();
+      return <div>Logging out...</div>;
+    }
     return Component ? <Component /> : <Dashboard />;
   };
 

@@ -301,10 +301,10 @@ function LoginPage() {
         {(role === 'student' || role === 'faculty') && (
           <p className="signup-link">
             Don't have an account?{' '}
-            {role === 'student' ? (
-              <a href="/signup">Sign up as Student</a>
-            ) : (
+            {role === 'faculty' ? (
               <span>Please contact admin for Faculty account</span>
+            ) : (
+              <span>Please contact admin for Student account</span>
             )}
           </p>
         )}
