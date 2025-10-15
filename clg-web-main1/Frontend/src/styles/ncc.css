@@ -1,0 +1,718 @@
+:double-button/* =====================
+   RESET + GLOBAL STYLES
+===================== */
+.ncc-page * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.ncc-page {
+  background: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Top Bar for NCC Website Link */
+.ncc-top-bar {
+  /* background: linear-gradient(135deg, #b81616, #d32f2f); */
+  color: #d32f2f;
+  text-align: center;
+  padding: 30px 20px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  position: relative;
+  border-radius: 15px;
+  /* box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); */
+  margin: 20px 0;
+}
+
+.ncc-top-bar-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #d32f2f;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ncc-top-bar-divider {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #ffd700, #ffeb3b, #ffd700);
+  position: relative;
+  border-radius: 1px;
+  margin-bottom: 50px;
+}
+
+.ncc-top-bar-divider .ncc-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.6rem;
+  color: #b81616;
+  background: #fff;
+  border-radius: 50%;
+  padding: 4px 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+  border: 1px solid #ffd700;
+}
+
+.ncc-top-bar-link {
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 12px 24px;
+  border-radius: 25px;
+  border: 2px solid #ffd700;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 50px;
+  background-color: #d32f2f;
+  color: white;
+}
+
+.ncc-top-bar-link:hover {
+  background: #ffd700;
+  color: #b81616;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Container */
+.ncc-page .container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Headings */
+.ncc-page .h1,
+.ncc-page h2,
+.ncc-page h3 {
+  margin-bottom: 15px;
+}
+
+.ncc-page .h1 {
+  text-align: center;
+}
+
+.ncc-page .heading1 {
+  text-align: center;
+}
+
+.ncc-page .heading1 h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  color: #b81616;
+  margin-top: 5%;
+}
+
+.ncc-page .heading1 p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+  color: #333;
+  margin-bottom: 5%;
+}
+
+@media (max-width: 768px) {
+  .ncc-page .heading1 h1 {
+    font-size: 2rem;
+  }
+
+  .ncc-page .heading1 p{
+    font-size: 1rem;
+  }
+}
+
+/* =====================
+   CARD COMPONENT
+===================== */
+.ncc-page .card {
+  background: #fff;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ncc-page .card1 {
+  background: #fff;
+  border-radius: 12px;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+}
+
+.ncc-page .card1 h2{
+  color: #b81616;
+  padding-top: 20px;
+
+}
+
+.ncc-page .card1 h2::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: #ff5722;
+  margin: 10px auto 0;
+  border-radius: 5px;
+}
+
+
+.ncc-page .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.ncc-page .card h2 {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 600;
+  color: #b81616;
+  margin-bottom: 20px;
+  position: relative;
+  margin-top: 40px;
+}
+
+.ncc-page .card h2::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: #ff5722;
+  margin: 10px auto 0;
+  border-radius: 5px;
+}
+
+.ncc-page .card p {
+  text-align: center;
+  color: #444;
+  margin-top: 50px;
+}
+
+.ncc-page .card1 ul {
+  list-style: none;
+  padding-left: 0;
+  color: #444;
+  text-align: left;
+}
+
+.ncc-page .card1 li {
+  margin-bottom: 10px;
+  padding-left: 42%;
+  position: relative;
+  transition: color 0.3s ease;
+  text-align: left;
+}
+
+.ncc-page .card1 h3 {
+  text-align: center;
+  color: #b81616;
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.ncc-page .card1 li::before {
+  content: '✓';
+  position: absolute;
+  left: 40%;
+  top: 0;
+  transform: translateX(-50%);
+  color: #b81616;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* Responsive for card1 */
+@media (max-width: 768px) {
+  .ncc-page .card1 ul {
+    padding-left: 0;
+  }
+
+  .ncc-page .card1 li::before {
+    left: 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .ncc-page .card li {
+    font-size: 15px;
+    color: #444;
+  }
+}
+
+@media (max-width: 480px) {
+  .ncc-page .card1 ul {
+    padding-left: 0;
+  }
+
+  .ncc-page .card1 li::before {
+    left: 35%;
+  }
+
+  .ncc-page .heading1 h1{
+    font-size: 1.8rem;
+  }
+
+   .ncc-page .heading1 p{
+    font-size: 1rem;
+  }
+}
+
+.ncc-page .card ul {
+  list-style: none;
+  padding-left: 0;
+  color: #444;
+  text-align: left;
+  padding: 10px;
+}
+
+.ncc-page .card li {
+  margin-bottom: 10px;
+  padding-left: 30px;
+  position: relative;
+  transition: color 0.3s ease;
+  text-align: left;
+}
+
+.ncc-page .card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #b81616;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* =====================
+   GRID UTILITY
+===================== */
+.ncc-page .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* =====================
+   NCC TIMINGS (TABLE)
+===================== */
+.ncc-page table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.ncc-page th,
+.ncc-page td {
+  padding: 15px 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.ncc-page th {
+  background: #b81616;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.ncc-page tr:nth-child(even) {
+  background: #f4f6f9;
+}
+
+.ncc-page tr:nth-child(odd) {
+  background: #fff;
+}
+
+.ncc-page tr:hover {
+  background: #e8eaf6;
+  transform: scale(1.01);
+  transition: all 0.3s ease;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  .ncc-page table,
+  .ncc-page thead,
+  .ncc-page tbody,
+  .ncc-page th,
+  .ncc-page td,
+  .ncc-page tr {
+    display: block;
+    width: 100%;
+  }
+
+  .ncc-page th {
+    display: none;
+  }
+
+  .ncc-page tr {
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 10px;
+  }
+
+  .ncc-page td {
+    text-align: left;
+    padding: 10px 15px;
+    position: relative;
+  }
+
+  .ncc-page td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #b81616;
+    display: block;
+    margin-bottom: 5px;
+  }
+}
+
+/* =====================
+   NCC EVENTS
+===================== */
+.ncc-page .ncc-events {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.ncc-page .event-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ncc-page .event-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ncc-page .event-card h3 {
+  margin-bottom: 10px;
+  color: #e63946;
+}
+
+/* =====================
+   NCC GALLERY
+===================== */
+.ncc-page .gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.ncc-page .gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.ncc-page .gallery-item img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.4s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.ncc-page .gallery-item img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Caption Overlay */
+.ncc-page .caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  font-size: 1rem;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.4s ease;
+}
+
+.ncc-page .gallery-item:hover .caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ncc-page .gallery-item img {
+    height: 180px;
+  }
+
+  .ncc-page .caption {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ncc-page .gallery-item img {
+    height: 160px;
+  }
+
+  .ncc-page .caption {
+    font-size: 0.8rem;
+  }
+}
+
+/* =====================
+   HIGHLIGHT BOX
+===================== */
+.ncc-page .highlight {
+  background: linear-gradient(135deg, #004080, #0073e6);
+  color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 25px 0;
+  transition: background 0.3s;
+}
+
+.ncc-page .highlight:hover {
+  background: linear-gradient(135deg, #0073e6, #004080);
+}
+
+/* =====================
+   SECTION HEADINGS
+===================== */
+.ncc-page section h2 {
+  font-size: 2rem;
+  color: #b81616;
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.ncc-page section h2::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 3px;
+  background: #ff5722;
+  margin: 10px auto 0;
+  border-radius: 5px;
+}
+
+/* Form Section */
+.ncc-query-section {
+  background: #f9f9f9;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #222;
+}
+
+/* Form Groups */
+.enquiry-form .form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.enquiry-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+  font-size: 15px;
+}
+
+/* Inputs & Textarea */
+.enquiry-form input,
+.enquiry-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+
+.enquiry-form input:focus,
+.enquiry-form textarea:focus {
+  border-color: #b81616;
+  box-shadow: 0 0 6px rgba(184, 22, 22, 0.4);
+}
+
+/* Error Messages */
+.error {
+  border-color: #e74c3c !important;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Submit Button */
+.submit-button {
+  width: 100%;
+  background: #b81616;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+  background: #9f1313;
+}
+
+/* --------------------------- */
+/* Highlight Section           */
+/* --------------------------- */
+.highlight {
+  background: linear-gradient(90deg, #ff9800, #ffc107, #ffeb3b, #ffc107);
+  color: #111;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 15px 20px;
+  margin: 30px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  letter-spacing: 0.5px;
+  word-wrap: break-word;
+  background-size: 200% auto;
+  animation: shine 3s linear infinite;
+}
+
+/* Animated shine effect */
+@keyframes shine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* --------------------------- */
+/* Scholarship Card Section    */
+/* --------------------------- */
+.scholarship-highlight {
+  background: linear-gradient(135deg, #ffeb3b, #ffc107, #ff9800);
+  color: #111;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  margin: 25px 0; 
+}
+
+.scholarship-highlight h2 {
+  color: #b81616;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.scholarship-highlight p {
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: justify;
+  margin-bottom: 15px;
+}
+
+.scholarship-highlight ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.scholarship-highlight ul li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+/* --------------------------- */
+/* Responsive Design           */
+/* --------------------------- */
+@media (max-width: 992px) {
+  .highlight {
+    font-size: 1.2rem;
+    padding: 12px;
+  }
+  .scholarship-highlight {
+    padding: 20px 25px;
+  }
+  .scholarship-highlight h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .highlight {
+    font-size: 1.1rem;
+    padding: 10px;
+  }
+  .scholarship-highlight {
+    padding: 18px 20px;
+  }
+  .scholarship-highlight h2 {
+    font-size: 1.3rem;
+  }
+  .scholarship-highlight p, 
+  .scholarship-highlight ul li {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 460px) {
+  .highlight {
+    font-size: 1rem;
+    padding: 8px;
+  }
+  .scholarship-highlight {
+    padding: 15px 15px;
+    margin: 15px 0;
+  }
+  .scholarship-highlight h2 {
+    font-size: 1.2rem;
+  }
+  .scholarship-highlight p, 
+  .scholarship-highlight ul li {
+    font-size: 0.9rem;
+  }
+}

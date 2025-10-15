@@ -1,0 +1,265 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f4f7fa;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin-bottom: 20px;
+  padding: 20px;
+  text-align: center;
+
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #002855;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 2px solid #002855;
+  margin: 0 10px;
+}
+
+.divider i {
+  color: #f9b500;
+  font-size: 1.3rem;
+}
+
+.scholarship-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.scholarship-buttons a {
+  text-decoration: none;
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: inline-block;
+  min-width: 250px;
+  text-align: center;
+}
+
+.up-scholarship {
+  background: #ffc107;
+  color: black;
+  border: 2px dashed black;
+}
+
+.up-scholarship:hover {
+  background: #e0a800;
+}
+
+.nsp-scholarship {
+  background: #002855;
+  color: #fff;
+}
+
+.nsp-scholarship:hover {
+  background: #004080;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  .scholarship-buttons a {
+    font-size: 1rem;
+    min-width: 200px;
+  }
+}
+
+/* Scholarship Page Styles */
+.scholarship-header {
+  text-align: center;
+}
+
+.scholarship-header h1 {
+ font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  color: #b81616;
+  margin-top: 5%;
+}
+
+.para {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+  color: black;
+  margin-bottom: 5%;
+}
+
+.scholarship-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.scholarship-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.scholarship-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.scholarship-card h2 {
+  color:  #f77745;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.scholarship-card ul {
+  margin: 0;
+  padding-left: 20px;
+
+}
+
+.scholarship-card ul li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.financial-info {
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 30px 20px;
+  background: #e3f2fd;
+  border-left: 5px solid #2196f3;
+  border-radius: 10px;
+}
+
+.financial-info h2 {
+  margin-bottom: 15px;
+  color:  #b81616;
+}
+
+.financial-info p {
+  line-height: 1.7;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .scholarship-header h1 {
+    font-size: 2rem;
+  }
+
+  .para {
+    font-size: 1rem;
+    max-width: 90%;
+    padding: 0 10px;
+  }
+
+  .scholarship-container {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
+
+  .scholarship-card {
+    padding: 15px;
+  }
+
+  .financial-info {
+    padding: 20px 10px;
+    margin: 20px 10px;
+  }
+
+  .requirements {
+    padding: 20px 10px;
+    margin: 20px 10px 40px 10px;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  .scholarship-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .scholarship-buttons a {
+    min-width: auto;
+    width: 100%;
+    padding: 12px 0;
+    font-size: 1rem;
+  }
+}
+
+.requirements {
+  max-width: 1000px;
+  margin: 40px auto 60px auto;
+  padding: 30px 20px;
+  background: #fff3e0;
+  border-left: 6px solid #fb8c00;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(251, 140, 0, 0.3);
+  color: #bf360c;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.requirements h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+  color: #b81616;
+}
+
+.requirements ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.requirements ul li {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 480px) {
+  .scholarship-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .para {
+    font-size: 1rem;
+    max-width: 90%;
+    padding: 0 10px;
+  }
+}
