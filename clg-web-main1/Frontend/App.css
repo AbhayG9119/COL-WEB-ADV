@@ -1,0 +1,107 @@
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+
+.about-header {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 20px 0 !important;
+  text-align: center !important; /* 👈 ye center karega */
+}
+
+
+/* Remove Contact Page Section Header Styling */
+.sectionHeader {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 2.5rem !important;
+  text-align: center !important;
+}
+
+.page-title {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 2.5rem !important;
+  text-align: center !important;
+}
+
+.page-title1 {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 2.5rem !important;
+  text-align: center !important;
+}
+
+.eligibility-header {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+/* Medium screens (tablets) */
+ @media (max-width: 768px) {
+  .eligibility-header {
+    font-size: 1.7rem;
+    margin: 10px 10px !important;
+  }
+}
+
+/* Small screens (mobiles) */
+@media (max-width: 480px) {
+  .eligibility-header {
+    font-size: 1.4rem;
+    margin: 8px 0 !important;
+  }
+} 
+
+
+.admission-section2{
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.scholarship-header{
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.heading1{
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.page-header{
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+}

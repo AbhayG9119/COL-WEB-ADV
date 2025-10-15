@@ -1,0 +1,15 @@
+.faculty-page {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.faculty-page .sub-heading {
+  font-size: 2rem;
+  color: #b81616;
+  margin-bottom: 20px;
+}
+
+.faculty-page .para {
+  font-size: 1.2rem;
+  color: #555;
+}
