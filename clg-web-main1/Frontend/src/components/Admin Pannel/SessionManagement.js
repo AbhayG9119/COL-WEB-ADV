@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 const SessionManagement = () => {
   const [sessions, setSessions] = useState([]);
   const [formData, setFormData] = useState({
-    sessionId: '',
-    startDate: '',
-    endDate: '',
+    session_name: '',
+    start_date: '',
+    end_date: '',
     description: ''
   });
   const [loading, setLoading] = useState(false);
@@ -45,6 +45,13 @@ const SessionManagement = () => {
     setLoading(true);
     setMessage('');
 
+    // Date order validation
+    if (new Date(formData.start_date) >= new Date(formData.end_date)) {
+      setMessage('End date must be after start date');
+      setLoading(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:5000/api/erp/session', {
@@ -61,9 +68,9 @@ const SessionManagement = () => {
       if (response.ok) {
         setMessage('Session created successfully!');
         setFormData({
-          sessionId: '',
-          startDate: '',
-          endDate: '',
+          session_name: '',
+          start_date: '',
+          end_date: '',
           description: ''
         });
         fetchSessions();
@@ -77,10 +84,10 @@ const SessionManagement = () => {
     }
   };
 
-  const activateSession = async (sessionId) => {
+  const activateSession = async (sessionName) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/erp/session/${sessionId}/activate`, {
+      const response = await fetch(`http://localhost:5000/api/erp/session/${sessionName}/activate`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -122,11 +129,11 @@ const SessionManagement = () => {
         <h3>Create New Session</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
           <div>
-            <label>Session ID:</label>
+            <label>Session Name:</label>
             <input
               type="text"
-              name="sessionId"
-              value={formData.sessionId}
+              name="session_name"
+              value={formData.session_name}
               onChange={handleInputChange}
               placeholder="e.g., 2024-25"
               required
@@ -148,8 +155,8 @@ const SessionManagement = () => {
             <label>Start Date:</label>
             <input
               type="date"
-              name="startDate"
-              value={formData.startDate}
+              name="start_date"
+              value={formData.start_date}
               onChange={handleInputChange}
               required
               style={{ width: '100%', padding: '8px', marginTop: '5px' }}
@@ -159,8 +166,8 @@ const SessionManagement = () => {
             <label>End Date:</label>
             <input
               type="date"
-              name="endDate"
-              value={formData.endDate}
+              name="end_date"
+              value={formData.end_date}
               onChange={handleInputChange}
               required
               style={{ width: '100%', padding: '8px', marginTop: '5px' }}
@@ -189,7 +196,7 @@ const SessionManagement = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: '#f8f9fa' }}>
-                <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Session ID</th>
+                <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Session Name</th>
                 <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Start Date</th>
                 <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>End Date</th>
                 <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Status</th>
@@ -199,12 +206,12 @@ const SessionManagement = () => {
             <tbody>
               {sessions.map(session => (
                 <tr key={session._id}>
-                  <td style={{ padding: '10px', border: '1px solid #ddd' }}>{session.sessionId}</td>
+                  <td style={{ padding: '10px', border: '1px solid #ddd' }}>{session.session_name}</td>
                   <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                    {new Date(session.startDate).toLocaleDateString()}
+                    {new Date(session.start_date).toLocaleDateString()}
                   </td>
                   <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                    {new Date(session.endDate).toLocaleDateString()}
+                    {new Date(session.end_date).toLocaleDateString()}
                   </td>
                   <td style={{ padding: '10px', border: '1px solid #ddd' }}>
                     <span style={{
@@ -219,7 +226,7 @@ const SessionManagement = () => {
                   <td style={{ padding: '10px', border: '1px solid #ddd' }}>
                     {!session.isActive && (
                       <button
-                        onClick={() => activateSession(session.sessionId)}
+                        onClick={() => activateSession(session.session_name)}
                         style={{
                           padding: '6px 12px',
                           backgroundColor: '#28a745',

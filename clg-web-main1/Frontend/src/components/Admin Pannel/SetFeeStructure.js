@@ -4,10 +4,11 @@ const SetFeeStructure = () => {
   const [sessions, setSessions] = useState([]);
   const [feeStructures, setFeeStructures] = useState([]);
   const [formData, setFormData] = useState({
-    sessionId: '',
+    session_name: '',
     classId: '',
-    feeHeads: [{ name: '', amount: 0, isMandatory: true, description: '' }],
-    description: ''
+    feeHeads: [{ name: '', amount: 0, isMandatory: true, description: '', frequency: 'one_time', currency: 'INR' }],
+    description: '',
+    currency: 'INR'
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -71,7 +72,7 @@ const SetFeeStructure = () => {
   const addFeeHead = () => {
     setFormData(prev => ({
       ...prev,
-      feeHeads: [...prev.feeHeads, { name: '', amount: 0, isMandatory: true, description: '' }]
+      feeHeads: [...prev.feeHeads, { name: '', amount: 0, isMandatory: true, description: '', frequency: 'one_time', currency: 'INR' }]
     }));
   };
 
@@ -90,6 +91,23 @@ const SetFeeStructure = () => {
     setLoading(true);
     setMessage('');
 
+    // Validations
+    if (!formData.session_name) {
+      setMessage('Please select a session.');
+      setLoading(false);
+      return;
+    }
+    if (!formData.classId) {
+      setMessage('Please enter a class ID.');
+      setLoading(false);
+      return;
+    }
+    if (formData.feeHeads.some(head => !head.name || head.amount <= 0)) {
+      setMessage('All fee heads must have a name and amount greater than 0.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:5000/api/erp/fee/structure', {
@@ -106,10 +124,11 @@ const SetFeeStructure = () => {
       if (response.ok) {
         setMessage('Fee structure created successfully!');
         setFormData({
-          sessionId: '',
+          session_name: '',
           classId: '',
-          feeHeads: [{ name: '', amount: 0, isMandatory: true, description: '' }],
-          description: ''
+          feeHeads: [{ name: '', amount: 0, isMandatory: true, description: '', frequency: 'one_time', currency: 'INR' }],
+          description: '',
+          currency: 'INR'
         });
         fetchFeeStructures();
       } else {
@@ -150,16 +169,16 @@ const SetFeeStructure = () => {
           <div>
             <label>Session:</label>
             <select
-              name="sessionId"
-              value={formData.sessionId}
+              name="session_name"
+              value={formData.session_name}
               onChange={handleInputChange}
               required
               style={{ width: '100%', padding: '8px', marginTop: '5px' }}
             >
               <option value="">Select Session</option>
               {sessions.map(session => (
-                <option key={session._id} value={session.sessionId}>
-                  {session.sessionId} ({session.description})
+                <option key={session._id} value={session.session_name}>
+                  {session.session_name} ({session.description})
                 </option>
               ))}
             </select>
@@ -199,7 +218,7 @@ const SetFeeStructure = () => {
             marginBottom: '10px',
             backgroundColor: '#f9f9f9'
           }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 0.5fr', gap: '10px', alignItems: 'end' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 0.5fr', gap: '10px', alignItems: 'end' }}>
               <div>
                 <label>Fee Head Name:</label>
                 <input
@@ -222,6 +241,18 @@ const SetFeeStructure = () => {
                   required
                   style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                 />
+              </div>
+              <div>
+                <label>Frequency:</label>
+                <select
+                  value={head.frequency}
+                  onChange={(e) => handleFeeHeadChange(index, 'frequency', e.target.value)}
+                  style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                >
+                  <option value="one_time">One Time</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="term">Term</option>
+                </select>
               </div>
               <div>
                 <label>
