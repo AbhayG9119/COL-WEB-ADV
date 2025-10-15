@@ -1,98 +1,70 @@
-# MERN Stack Contact Form with Admin Panel
+# Getting Started with Create React App
 
-## Overview
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-This project is a full MERN stack application with a contact form and an admin panel. The backend is built with Node.js, Express, MongoDB, and Mongoose. The frontend is built with React and React Router.
+## Available Scripts
 
-## Features
+In the project directory, you can run:
 
-- Public contact form to submit inquiries
-- Admin login with JWT authentication
-- Admin dashboard to view contact submissions
-- Dashboard stats including total and today's submissions
-- Search, pagination, and CSV export of contacts
-- Secure backend with Helmet, CORS, and rate limiting
-- Email notifications on contact form submission
+### `npm start`
 
-## Environment Variables
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-Create a `.env` file in the `Backend` folder based on `.env.example` with the following variables:
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-```
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_EMAIL=your_email@gmail.com
-SMTP_PASSWORD=your_email_app_password
-FROM_NAME=College Admin
-FROM_EMAIL=admin@college.com
-ADMIN_EMAIL=your_admin_email@gmail.com
-```
+### `npm test`
 
-## Backend Setup
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-1. Navigate to the `Backend` folder:
+### `npm run build`
 
-```bash
-cd Backend
-```
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-2. Install dependencies:
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-```bash
-npm install
-```
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-3. Seed an admin user (optional):
+### `npm run eject`
 
-```bash
-node src/scripts/seedAdmin.js
-```
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-4. Start the backend server:
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-```bash
-npm run dev
-```
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-The backend server will run on `http://localhost:5000`.
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Frontend Setup
+## Learn More
 
-1. Navigate to the `Frontend` folder:
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-```bash
-cd Frontend
-```
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-2. Install dependencies (ensure `axios` is installed):
+### Code Splitting
 
-```bash
-npm install
-```
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-3. Start the frontend development server:
+### Analyzing the Bundle Size
 
-```bash
-npm start
-```
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-The frontend will run on `http://localhost:3000`.
+### Making a Progressive Web App
 
-## Usage
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-- Access the public contact form at `/contact`.
-- Admin login page is at `/admin/login`.
-- After login, access the admin dashboard at `/admin/dashboard`.
+### Advanced Configuration
 
-## Notes
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-- Ensure MongoDB Atlas connection string and SMTP credentials are correctly set in `.env`.
-- The admin dashboard is protected and requires a valid JWT token.
-- The contact form sends email notifications to the admin email.
+### Deployment
 
-## License
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-MIT License
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
