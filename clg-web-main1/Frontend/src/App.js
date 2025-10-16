@@ -34,6 +34,11 @@ import './App.css';
 function App() {
   const location = useLocation();
 
+  // Check if current path is an ERP panel page (linked to backend)
+  const isERPPage = location.pathname.startsWith('/admin') ||
+                    location.pathname.startsWith('/staff') ||
+                    location.pathname.startsWith('/student');
+
   return (
     <div className="app">
       <ScrollToTop />
@@ -69,7 +74,7 @@ function App() {
           <Route path="/academic-cell-dashboard" element={<AdminPanel />} />
         </Routes>
       </main>
-      <Footer />
+      {!isERPPage && <Footer />}
     </div>
   );
 }
