@@ -1,15 +1,17 @@
-# TODO List for About.js Naming Convention and CSS Update
+# TODO: Debug /api/users Endpoint Errors
 
-- [x] Update class names in About.js to include "about-" prefix
-- [x] Create CSS styles in about.css for the updated class names
-- [ ] Test the changes by running the React app (npm start)
-- [ ] Verify the design looks good and is responsive
+## Current Status
+- Backend server running
+- Admin user exists in DB
+- JWT token valid
+- Errors: 403 Forbidden and 500 Internal Server Error on GET /api/users
 
-# TODO List for Home.js Rewrite
-
-- [x] Remove all imported components from Home.js
-- [x] Rewrite Home.js with all code inlined using the provided HTML content converted to JSX
-- [x] Fix image imports to use proper React import statements
-- [x] Update home.css with styles for all classes in Home.js
-- [ ] Test the changes by running the React app (npm start)
-- [ ] Verify the new Home page design and functionality
+## Steps to Complete
+- [x] Verify logged-in user's role (should be 'admin')
+- [x] Check database connection and model accessibility
+- [x] Test /api/users endpoint directly via browser or curl
+- [x] Add logging to auth.js and userController.js for debugging
+- [ ] Use browser_action to simulate request and check console logs
+- [ ] Identify root cause (403: not admin, 500: DB query failure)
+- [ ] Fix the issue (update user role or fix DB queries)
+- [ ] Test the fix
