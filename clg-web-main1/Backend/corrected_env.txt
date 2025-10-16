@@ -1,6 +1,6 @@
 PORT=5000
 MONGO_URI= mongodb+srv://snsmv25_db_user:NMW6e0LzyYiTvERo@college-cluster.kmiwakh.mongodb.net/collegeDB?retryWrites=true&w=majority&appName=college-cluster
-JWT_SECRET=your_jwt_secret_here_replace_with_random_string
+JWT_SECRET=16646a00b25d468434cde49652539acb9ea64cbab25f3deaf8eaba352a03ae47
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_EMAIL=snsmv25@gmail.com
