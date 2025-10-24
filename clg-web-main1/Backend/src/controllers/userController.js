@@ -52,8 +52,8 @@ export const addUser = async (req, res) => {
     if (role === 'admin') {
       user = new Admin({ email, password });
     } else if (role === 'faculty') {
-      if (!name || !designation || !department || !subject) {
-        return res.status(400).json({ message: 'Name, designation, department, and subject are required for faculty' });
+      if (!name || !designation || !department || !subject || !req.body.staffId) {
+        return res.status(400).json({ message: 'Name, designation, department, subject, and staffId are required for faculty' });
       }
       user = new Faculty({
         username: email, // Use email as username
@@ -67,7 +67,8 @@ export const addUser = async (req, res) => {
         qualifications,
         joiningDate: joiningDate ? new Date(joiningDate) : new Date(),
         phone,
-        address
+        address,
+        staffId: req.body.staffId // Add staffId from request body
       });
     } else if (role === 'student') {
       if (!name || !department || !year || !semester || !mobileNumber) {
@@ -166,6 +167,25 @@ export const editUser = async (req, res) => {
         Model = StudentBSc;
       } else if (existingUser.department === 'B.Ed') {
         Model = StudentBEd;
+      }
+
+      // For students, parse the 'name' field into firstName, middleName, lastName
+      if (updates.name !== undefined) {
+        const nameParts = updates.name.trim().split(/\s+/);
+        if (nameParts.length === 1) {
+          updates.firstName = nameParts[0];
+          updates.lastName = '';
+          updates.middleName = '';
+        } else if (nameParts.length === 2) {
+          updates.firstName = nameParts[0];
+          updates.lastName = nameParts[1];
+          updates.middleName = '';
+        } else {
+          updates.firstName = nameParts[0];
+          updates.lastName = nameParts[nameParts.length - 1];
+          updates.middleName = nameParts.slice(1, -1).join(' ');
+        }
+        delete updates.name; // Remove the original name field
       }
     } else {
       return res.status(400).json({ message: 'Invalid role' });

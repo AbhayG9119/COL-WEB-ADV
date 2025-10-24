@@ -14,7 +14,7 @@ const getProfile = async (req, res) => {
     if (!staff) {
       return res.status(404).json({ message: 'Staff not found' });
     }
-    console.log('Staff profile retrieved:', { id: staff._id, profilePicture: staff.profilePicture });
+    console.log('Staff profile retrieved:', { id: staff._id, profilePicture: staff.profilePicture, staffId: staff.staffId });
     res.json(staff);
   } catch (error) {
     console.error('Error retrieving staff profile:', error);

@@ -59,6 +59,11 @@ const facultySchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  staffId: {
+    type: String,
+    required: true,
+    unique: true
+  },
   role: {
     type: String,
     default: 'faculty'

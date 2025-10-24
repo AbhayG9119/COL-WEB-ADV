@@ -23,6 +23,11 @@ router.get('/', getUsers);
 // @access  Private (Admin only)
 router.post('/', addUser);
 
+// @route   POST /api/users/staff/register
+// @desc    Register new staff
+// @access  Private (Admin only)
+router.post('/staff/register', addUser);
+
 // @route   PUT /api/users/:id/:role
 // @desc    Edit user
 // @access  Private (Admin only)
