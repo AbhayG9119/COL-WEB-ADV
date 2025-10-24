@@ -1,3 +1,6 @@
+// This component is deprecated. Staff registration is now handled in AddUser.js
+// Keeping this file for reference or future use if needed.
+
 import React, { useState, useEffect } from 'react';
 import { staffApi } from '../../services/adminApi';
 
@@ -10,7 +13,8 @@ const RegisterStaff = () => {
     dateOfBirth: '',
     designationId: '',
     joiningDate: new Date().toISOString().split('T')[0],
-    address: ''
+    address: '',
+    staffId: ''
   });
   const [designations, setDesignations] = useState([]);
   const [isValid, setIsValid] = useState(false);
@@ -28,7 +32,7 @@ const RegisterStaff = () => {
   }, []);
 
   useEffect(() => {
-    const { fullName, email, phoneNumber, gender, designationId, joiningDate } = formData;
+    const { fullName, email, phoneNumber, gender, designationId, joiningDate, staffId } = formData;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\d{10}$/;
     const dobValid = !formData.dateOfBirth || new Date(formData.dateOfBirth) <= new Date();
@@ -39,6 +43,7 @@ const RegisterStaff = () => {
       gender &&
       designationId &&
       joiningDate &&
+      staffId.trim().length > 0 &&
       dobValid
     );
   }, [formData]);
@@ -67,7 +72,8 @@ const RegisterStaff = () => {
         dateOfBirth: '',
         designationId: '',
         joiningDate: new Date().toISOString().split('T')[0],
-        address: ''
+        address: '',
+        staffId: ''
       });
     } else {
       setMessage(result.error || 'Failed to register staff');
@@ -77,8 +83,8 @@ const RegisterStaff = () => {
 
   return (
     <div className="menu-content">
-      <h1>Register Staff</h1>
-      <p>Add new staff members to the system.</p>
+      <h1>Register Staff (Deprecated)</h1>
+      <p>This component is deprecated. Use AddUser.js for staff registration.</p>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Full Name:</label>
@@ -146,6 +152,16 @@ const RegisterStaff = () => {
             type="date"
             name="joiningDate"
             value={formData.joiningDate}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Staff ID:</label>
+          <input
+            type="text"
+            name="staffId"
+            value={formData.staffId}
             onChange={handleChange}
             required
           />

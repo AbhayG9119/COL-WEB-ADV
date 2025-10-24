@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const AddUser = () => {
   const [formData, setFormData] = useState({
@@ -16,10 +17,10 @@ const AddUser = () => {
     qualifications: '',
     joiningDate: '',
     phone: '',
-    address: ''
+    address: '',
+    staffId: ''
   });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,7 +33,6 @@ const AddUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
 
     try {
       const token = localStorage.getItem('token');
@@ -51,7 +51,7 @@ const AddUser = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage('User added successfully!');
+        toast.success('User added successfully!');
         setFormData({
           name: '',
           email: '',
@@ -67,15 +67,16 @@ const AddUser = () => {
           qualifications: '',
           joiningDate: '',
           phone: '',
-          address: ''
+          address: '',
+          staffId: ''
         });
         // Optionally refresh the page or update state to show new user
         // window.location.reload(); // Uncomment if you want to refresh
       } else {
-        setMessage(data.message || 'Failed to add user');
+        toast.error(data.message || 'Failed to add user');
       }
     } catch (error) {
-      setMessage('Network error. Please try again.');
+      toast.error('Network error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -85,20 +86,6 @@ const AddUser = () => {
     <div className="menu-content">
       <h1>Add User</h1>
       <p>Register new users with roles: Admin, Faculty, Student.</p>
-
-      {message && (
-        <div style={{
-          padding: '10px',
-          marginBottom: '20px',
-          backgroundColor: message.includes('successfully') ? '#d4edda' : '#f8d7da',
-          color: message.includes('successfully') ? '#155724' : '#721c24',
-          border: '1px solid',
-          borderColor: message.includes('successfully') ? '#c3e6cb' : '#f5c6cb',
-          borderRadius: '4px'
-        }}>
-          {message}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} style={{ maxWidth: '600px' }}>
         <div style={{ marginBottom: '15px' }}>
@@ -213,6 +200,18 @@ const AddUser = () => {
 
         {formData.role === 'faculty' && (
           <>
+            <div style={{ marginBottom: '15px' }}>
+              <label>Staff ID:</label>
+              <input
+                type="text"
+                name="staffId"
+                value={formData.staffId}
+                onChange={handleChange}
+                required
+                style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+              />
+            </div>
+
             <div style={{ marginBottom: '15px' }}>
               <label>Designation:</label>
               <input

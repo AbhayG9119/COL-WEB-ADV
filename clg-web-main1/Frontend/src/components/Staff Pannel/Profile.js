@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const Profile = () => {
   const [profile, setProfile] = useState({
+    _id: '',
     name: '',
     designation: '',
     department: '',
@@ -120,6 +121,10 @@ const Profile = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Staff ID:</label>
+          <input type="text" name="staffId" value={profile.staffId || profile._id} disabled />
+        </div>
         <div className="form-group">
           <label>Name:</label>
           <input type="text" name="name" value={profile.name} onChange={handleChange} disabled={!editing} required />

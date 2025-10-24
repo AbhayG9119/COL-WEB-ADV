@@ -51,7 +51,8 @@ const ManageUsers = () => {
       qualifications: user.qualifications || '',
       joiningDate: user.joiningDate ? user.joiningDate.split('T')[0] : '',
       phone: user.phone || '',
-      address: user.address || ''
+      address: user.address || '',
+      staffId: user.staffId || ''
     });
   };
 
@@ -330,6 +331,18 @@ const ManageUsers = () => {
 
               {editingUser.role === 'faculty' && (
                 <>
+                  <div style={{ marginBottom: '15px' }}>
+                    <label>Staff ID:</label>
+                    <input
+                      type="text"
+                      name="staffId"
+                      value={editForm.staffId}
+                      onChange={handleEditFormChange}
+                      required
+                      style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                    />
+                  </div>
+
                   <div style={{ marginBottom: '15px' }}>
                     <label>Designation:</label>
                     <input
