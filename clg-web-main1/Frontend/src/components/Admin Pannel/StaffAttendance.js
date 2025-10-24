@@ -1,10 +1,10 @@
- import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { staffApi } from '../../services/adminApi';
 
 const StaffAttendance = () => {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [staffList, setStaffList] = useState([]);
-  const [designations, setDesignations] = useState([]);
+
   const [attendance, setAttendance] = useState({});
   const [originalAttendance, setOriginalAttendance] = useState({});
   const [savedAttendanceRecords, setSavedAttendanceRecords] = useState({});
@@ -26,16 +26,6 @@ const StaffAttendance = () => {
         { id: 5, full_name: 'Charlie Wilson', designation_name: 'Peon' }
       ];
       setStaffList(mockStaff);
-
-      // Mock designations
-      const mockDesignations = [
-        { id: 1, name: 'Teacher' },
-        { id: 2, name: 'Principal' },
-        { id: 3, name: 'Clerk' },
-        { id: 4, name: 'Librarian' },
-        { id: 5, name: 'Peon' }
-      ];
-      setDesignations(mockDesignations);
 
       // Mock leave data for demonstration
       const mockLeaves = [

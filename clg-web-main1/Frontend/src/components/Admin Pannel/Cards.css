@@ -1,0 +1,68 @@
+.menu-content {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.menu-content h1 {
+  color: #333;
+}
+
+.menu-content form div {
+  margin-bottom: 15px;
+}
+
+.menu-content label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.menu-content input, .menu-content select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.menu-content button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.menu-content button:hover {
+  background-color: #0056b3;
+}
+
+.id-card-preview, .admit-card-preview {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+}
+
+.admit-card {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background-color: #f2f2f2;
+}
