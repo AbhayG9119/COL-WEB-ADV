@@ -102,7 +102,7 @@ const StudentPanel = () => {
           ))}
         </ul>
       </nav>
-      <main className="content">
+      <main className="content" style={{ marginTop: '80px' }}>
         {renderContent()}
       </main>
     </div>

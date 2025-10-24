@@ -16,7 +16,7 @@ import LeaveManagement from '../components/Staff Pannel/LeaveManagement';
 import Timetable from '../components/Staff Pannel/Timetable';
 import Payroll from '../components/Staff Pannel/Payroll';
 import AssignClass from '../components/Staff Pannel/AssignClass';
-import '../styles/AdminPanel.css';
+import '../styles/StaffPanel.css';
 
 const StaffPanel = () => {
   const [activeMenu, setActiveMenu] = useState('Dashboard');

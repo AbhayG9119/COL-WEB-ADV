@@ -26,6 +26,7 @@ import StaffPanel from './pages/StaffPanel';
 import ProtectedRoute from './components/ProtectedRoute';
 import StudentPanel from './pages/StudentPanel';
 import UploadPhoto from './components/Staff Pannel/UploadPhoto';
+import StudentUploadPhoto from './components/Student Pannel/UploadPhoto';
 import './styles/main.css';
 import './styles/footer.css';
 import './App.css';
@@ -68,6 +69,7 @@ function App() {
           <Route path="/staff" element={<ProtectedRoute role="staff"><StaffPanel /></ProtectedRoute>} />
           <Route path="/staff/upload-photo" element={<ProtectedRoute role="staff"><UploadPhoto /></ProtectedRoute>} />
           <Route path="/student" element={<StudentPanel />} />
+          <Route path="/student/upload-photo" element={<StudentUploadPhoto />} />
           <Route path="/admin/dashboard" element={<AdminPanel />} />
           <Route path="/faculty/dashboard" element={<StaffPanel />} />
           <Route path="/student/dashboard" element={<StudentPanel />} />
