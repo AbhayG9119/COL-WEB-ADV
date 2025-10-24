@@ -12,7 +12,8 @@ const Profile = () => {
     year: '',
     semester: '',
     mobileNumber: '',
-    email: ''
+    email: '',
+    profilePhoto: ''
   });
 
   useEffect(() => {
@@ -116,6 +117,47 @@ const Profile = () => {
       {success && <div className="success-message" style={{ color: 'green', marginBottom: '10px' }}>{success}</div>}
       <div>
         <h2>View Profile</h2>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          {profile.profilePhoto ? (
+            <img
+              src={`http://localhost:5000/uploads/profile-pictures/${profile.profilePhoto}`}
+              alt="Profile"
+              style={{
+                width: '150px',
+                height: '150px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '3px solid #007bff'
+              }}
+              onError={(e) => {
+                console.error('Image failed to load:', e.target.src);
+                // Hide broken image and show fallback
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+          ) : null}
+          <div
+            style={{
+              width: '150px',
+              height: '150px',
+              borderRadius: '50%',
+              backgroundColor: '#f0f0f0',
+              display: profile.profilePhoto ? 'none' : 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '3px solid #ccc',
+              margin: '0 auto'
+            }}
+          >
+            <span style={{ fontSize: '48px', color: '#666' }}>👤</span>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <a href="/student/upload-photo" style={{ color: '#007bff', textDecoration: 'none' }}>
+              {profile.profilePhoto ? 'Change Photo' : 'Upload Photo'}
+            </a>
+          </div>
+        </div>
         <p><strong>Name:</strong> {isEditing ? <input name="name" value={profile.name || ''} onChange={handleChange} /> : profile.name}</p>
         <p><strong>Department:</strong> {profile.department}</p>
         <p><strong>Year:</strong> {profile.year}</p>
