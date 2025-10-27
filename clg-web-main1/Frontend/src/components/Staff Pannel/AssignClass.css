@@ -1,0 +1,133 @@
+.assign-class {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.assign-class h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.classes-table, .subjects-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.classes-table th, .classes-table td,
+.subjects-table th, .subjects-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.classes-table th, .subjects-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.classes-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.classes-table tbody tr:hover {
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.subject-panel {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-in-out;
+}
+
+.subject-panel h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.subjects-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.subjects-table tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+.theory-row {
+  background-color: #e3f2fd !important; /* Theory = blue */
+}
+
+.lab-row {
+  background-color: #e8f5e8 !important; /* Lab = green */
+}
+
+.close-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.close-btn:hover {
+  background-color: #0056b3;
+}
+
+.empty-state {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .assign-class {
+    padding: 10px;
+  }
+
+  .classes-table, .subjects-table {
+    font-size: 14px;
+  }
+
+  .classes-table th, .classes-table td,
+  .subjects-table th, .subjects-table td {
+    padding: 8px;
+  }
+
+  .subject-panel {
+    padding: 15px;
+  }
+}
+
+/* Accessibility */
+.classes-table tbody tr:focus,
+.subjects-table tbody tr:focus {
+  outline: 2px solid #007bff;
+  outline-offset: -2px;
+}
+
+.close-btn:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}

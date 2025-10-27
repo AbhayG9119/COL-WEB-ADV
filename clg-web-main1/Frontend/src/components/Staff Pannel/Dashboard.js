@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Assuming Axios is installed; for API calls
+import Alert from '../Admin Pannel/Alert';
+import '../Alert.css';
 
 const Dashboard = () => {
+  const [alerts, setAlerts] = useState([]);
+  const [showAlerts, setShowAlerts] = useState(false);
   const [assignedClasses, setAssignedClasses] = useState(0);
   const [todayTimetable, setTodayTimetable] = useState([]);
   const [pendingAssignments, setPendingAssignments] = useState(0);
@@ -10,6 +14,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetchAlerts();
     const fetchDashboardData = async () => {
       try {
         const token = localStorage.getItem('token'); // Assuming JWT token stored
@@ -53,13 +58,60 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  const fetchAlerts = async () => {
+    // Mock data for demonstration
+    const mockAlerts = [
+      { _id: '1', message: 'Staff meeting scheduled for tomorrow', type: 'info' },
+      { _id: '2', message: 'New student enrollment deadline approaching', type: 'warning' }
+    ];
+    setAlerts(mockAlerts);
+    // Uncomment below for real API call
+    // try {
+    //   const token = localStorage.getItem('token');
+    //   const config = { headers: { Authorization: `Bearer ${token}` } };
+    //   const res = await axios.get('/api/alerts', config);
+    //   setAlerts(res.data);
+    // } catch (error) {
+    //   console.error('Error fetching alerts:', error);
+    // }
+  };
+
+  const dismissAlert = (alertId) => {
+    setAlerts(alerts.filter(alert => alert._id !== alertId));
+  };
+
   if (loading) {
     return <div className="loading">Loading dashboard...</div>;
   }
 
   return (
     <div className="staff-dashboard">
-      <h1>Staff Dashboard</h1>
+      <div className="dashboard-header">
+        <h1>Staff Dashboard</h1>
+        <div className="alert-icon" onClick={() => setShowAlerts(!showAlerts)}>
+          🔔
+          {alerts.length > 0 && <span className="alert-count">{alerts.length}</span>}
+        </div>
+      </div>
+
+      {showAlerts && (
+        <div className="alerts-panel">
+          {alerts.length === 0 ? (
+            <p>No new alerts.</p>
+          ) : (
+            alerts.map(alert => (
+              <Alert
+                key={alert._id}
+                message={alert.message}
+                type={alert.type}
+                onClose={() => dismissAlert(alert._id)}
+                duration={5000}
+              />
+            ))
+          )}
+        </div>
+      )}
+
       <div className="dashboard-cards">
         <div className="card">
           <h3>Assigned Classes</h3>

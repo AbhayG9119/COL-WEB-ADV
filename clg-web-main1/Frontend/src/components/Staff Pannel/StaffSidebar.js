@@ -30,9 +30,8 @@ const StaffSidebar = () => {
       name: 'Attendance Management',
       path: null,
       subMenu: [
-        { name: 'Attendance Entry', path: '/staff/mark-attendance' },
-        { name: 'Attendance View', path: '/staff/attendance-report' },
-        { name: 'Daily/Monthly Reports', path: '/staff/attendance-reports' }
+        { name: 'Mark Attendance', path: '/staff/mark-attendance' },
+        { name: 'Attendance Report', path: '/staff/attendance-report' }
       ]
     },
     {
@@ -48,7 +47,6 @@ const StaffSidebar = () => {
       path: '/staff/messaging',
       subMenu: [
         { name: 'Send/Receive Messages', path: '/staff/messaging' },
-        { name: 'Alerts', path: '/staff/alerts' }
       ]
     },
     {
@@ -65,10 +63,18 @@ const StaffSidebar = () => {
       ]
     },
     {
+      name: 'Assignment Management',
+      path: null,
+      subMenu: [
+        { name: 'Create Assignment', path: '/staff/create-assignment' },
+        { name: 'View Submissions', path: '/staff/view-submissions' },
+        { name: 'Grade Assignments', path: '/staff/grade-assignments' }
+      ]
+    },
+    {
       name: 'Work Management',
       path: null,
       subMenu: [
-        { name: 'Assignments', path: '/staff/create-assignment' },
         { name: 'Reports', path: '/staff/work-reports' }
       ]
     },
