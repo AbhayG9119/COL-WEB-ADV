@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Alert from '../Admin Pannel/Alert';
-import '../Alert.css';
+import Alert from './Alert';
+import './Alert.css';
 
 const Dashboard = () => {
   const [alerts, setAlerts] = useState([]);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Assuming Axios is installed; for API calls
-import Alert from '../Admin Pannel/Alert';
-import '../Alert.css';
+import Alert from './Alert';
+import './Alert.css';
 
 const Dashboard = () => {
   const [alerts, setAlerts] = useState([]);
