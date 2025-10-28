@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import Course from './src/models/Course.js';
-import connectDB from './src/config/db.js';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: './Backend/.env' });
 
 const coursesData = [
   {
@@ -191,7 +193,8 @@ const coursesData = [
 
 const seedCourses = async () => {
   try {
-    await connectDB();
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ MongoDB connected');
     await Course.deleteMany({});
     await Course.insertMany(coursesData);
     console.log('Courses seeded successfully');
@@ -199,6 +202,9 @@ const seedCourses = async () => {
   } catch (error) {
     console.error('Error seeding courses:', error);
     process.exit(1);
+  } finally {
+    await mongoose.disconnect();
+    console.log('🔌 MongoDB disconnected');
   }
 };
 

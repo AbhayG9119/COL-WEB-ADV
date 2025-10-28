@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Admin from './src/models/Admin.js';
 
-dotenv.config();
+dotenv.config({ path: './Backend/.env' });
 
 async function createAdmin() {
   try {

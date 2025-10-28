@@ -91,6 +91,15 @@ async function createFaculty() {
         existing.department = department;
         existing.subject = subject;
         existing.subjectsTaught = subjectsTaught;
+        if (!existing.staffId) {
+          existing.staffId = `FAC${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+        }
+        if (!existing.name) {
+          existing.name = username;
+        }
+        if (!existing.joiningDate) {
+          existing.joiningDate = new Date('2023-01-01');
+        }
         await existing.save();
         console.log(`🔄 Faculty updated successfully: ${existing.email}`);
         continue;
@@ -107,7 +116,8 @@ async function createFaculty() {
         role: 'faculty',
         name: username,
         designation: 'Lecturer',
-        joiningDate: new Date('2023-01-01')
+        joiningDate: new Date('2023-01-01'),
+        staffId: `FAC${Date.now()}${Math.random().toString(36).substr(2, 5).toUpperCase()}`
       });
 
       await faculty.save();

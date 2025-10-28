@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 import NCCQuery from './src/models/NCCQuery.js';
-import connectDB from './src/config/db.js';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: './Backend/.env' });
 
 const seedNCCQueries = async () => {
   try {
-    await connectDB();
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ MongoDB connected');
 
     // Clear existing NCC queries
     await NCCQuery.deleteMany({});
@@ -78,6 +81,9 @@ const seedNCCQueries = async () => {
   } catch (error) {
     console.error('Error seeding NCC queries:', error);
     process.exit(1);
+  } finally {
+    await mongoose.disconnect();
+    console.log('🔌 MongoDB disconnected');
   }
 };
 

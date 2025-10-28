@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 import Contact from './src/models/Contact.js';
-import connectDB from './src/config/db.js';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: './Backend/.env' });
 
 const seedContacts = async () => {
   try {
-    await connectDB();
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ MongoDB connected');
 
     // Clear existing contacts
     await Contact.deleteMany({});
@@ -68,6 +71,9 @@ const seedContacts = async () => {
   } catch (error) {
     console.error('Error seeding contacts:', error);
     process.exit(1);
+  } finally {
+    await mongoose.disconnect();
+    console.log('🔌 MongoDB disconnected');
   }
 };
 
