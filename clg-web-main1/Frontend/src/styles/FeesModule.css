@@ -1,0 +1,240 @@
+/* Fees Module Styles */
+
+.fees-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.fees-page h1 {
+  color: #2c3e50;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.fees-ledger-section,
+.receipt-download-section {
+  margin-bottom: 40px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.fees-ledger-section h2,
+.receipt-download-section h2 {
+  color: #34495e;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+/* Filter Bar */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-bar select,
+.filter-bar input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 120px;
+}
+
+.filter-bar input[type="date"] {
+  min-width: 140px;
+}
+
+.filter-bar input[type="text"] {
+  min-width: 200px;
+}
+
+/* Fees Table */
+.fees-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.fees-table th,
+.fees-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.fees-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.fees-table tr:hover {
+  background-color: #f1f2f6;
+}
+
+.fees-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Status Badges */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.badge.paid {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge.pending {
+  background-color: #ffc107;
+  color: black;
+}
+
+.badge.overdue {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Receipt List */
+.receipt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.receipt-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: box-shadow 0.3s;
+}
+
+.receipt-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.receipt-info h3 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 1.1em;
+}
+
+.receipt-info p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.download-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.download-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+  font-size: 1.1em;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .fees-page {
+    padding: 10px;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar select,
+  .filter-bar input {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .fees-table {
+    font-size: 14px;
+  }
+
+  .fees-table th,
+  .fees-table td {
+    padding: 8px;
+  }
+
+  .receipt-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .download-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .fees-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .receipt-card {
+    padding: 10px;
+  }
+}
+
+/* Accessibility */
+.fees-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.filter-bar select:focus,
+.filter-bar input:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+.download-btn:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}

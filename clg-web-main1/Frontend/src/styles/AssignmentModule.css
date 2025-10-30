@@ -1,0 +1,159 @@
+/* Additional styles for Assignment Module */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-bar select, .filter-bar input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.assignment-list {
+  margin-bottom: 20px;
+}
+
+.assignment-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+}
+
+.assignment-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.assignment-card h3 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+}
+
+.assignment-card p {
+  margin: 5px 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.badge.overdue {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.close-btn {
+  background-color: #e74c3c;
+  margin-top: 10px;
+}
+
+.close-btn:hover {
+  background-color: #c0392b;
+}
+
+.assignment-selector {
+  margin-bottom: 20px;
+}
+
+.assignment-selector select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.upload-section {
+  margin-bottom: 20px;
+}
+
+.upload-section input[type="file"] {
+  margin-bottom: 10px;
+}
+
+.upload-section textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.validation-message {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.submit-btn {
+  margin-bottom: 20px;
+}
+
+.status-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.status-card h3 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+}
+
+.late-flag {
+  color: #e74c3c;
+  font-weight: bold;
+}
