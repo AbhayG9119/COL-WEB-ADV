@@ -75,6 +75,7 @@ const StaffSidebar = () => {
       name: 'Work Management',
       path: null,
       subMenu: [
+        { name: 'Assigned Tasks', path: '/staff/assigned-tasks' },
         { name: 'Reports', path: '/staff/work-reports' }
       ]
     },
