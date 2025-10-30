@@ -262,7 +262,7 @@ function NCC() {
               <div className="caption">Swachh Bharat</div>
             </div>
             <div className="gallery-item">
-              <img src="/images/ncc8.jpeg" alt="Guest Lecture" />
+              <img src="/images/ncc9.jpeg" alt="Guest Lecture" />
               <div className="caption">Guest Lecture</div>
             </div>
           </div>
